@@ -14,8 +14,8 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Creat
         let newTracker = TrackerCategory(title: categoryTitle, trackers: [tracker])
         categories.append(newTracker)
         visibleCategories = categories
-        print(visibleCategories)
         updateVisibleCategories(visibleCategories)
+        print(visibleCategories)
     }
     
     
