@@ -1,13 +1,6 @@
 import UIKit
  
 final class TabBarController: UITabBarController {
-    override func awakeFromNib() {
-//        super.awakeFromNib()
-//        view.backgroundColor = .systemBackground
-//        UITabBar.appearance().barTintColor = .systemBackground
-//        tabBar.tintColor = .label
-//        setupViewControllers()
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

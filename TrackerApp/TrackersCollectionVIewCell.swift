@@ -1,7 +1,8 @@
 import UIKit
 
 protocol TrackersCollectionViewCellDelegate: AnyObject {
-    
+    func completedTracker(id: UUID, indexPath: IndexPath)
+    func uncompleteTracker(id: UUID, at indexPath: IndexPath)
 }
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
@@ -10,11 +11,11 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     public weak var delegate: TrackersCollectionViewCellDelegate?
     private var isCompletedToday: Bool = false
     private var trackerId: UUID? = nil
+    private var indexPath: IndexPath?
     
     lazy var collectionView: UIView = {
         let collectionView = UIView()
         collectionView.layer.cornerRadius = 16
-        
         return collectionView
     } ()
     
@@ -54,9 +55,32 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         checkButton.setImage(image, for: .normal)
         checkButton.tintColor = .white
         checkButton.layer.cornerRadius = 16
+        checkButton.addTarget(self, action: #selector(didTapCheckButton), for: .touchUpInside)
         return checkButton
     } ()
     
+    @objc func didTapCheckButton() {
+        guard let id = trackerId,
+              let indexPath = indexPath else { return }
+        if isCompletedToday {
+            delegate?.completedTracker(id: id, indexPath: indexPath)
+        } else {
+            delegate?.uncompleteTracker(id: id, at: indexPath)
+        }
+    }
+    
+    func setupCell(tracker: Tracker, isCompleted: Bool, completedCount: Int, indexPath: IndexPath ) {
+        emojiLabel.text = tracker.emoji
+        trackerName.text = tracker.title
+        collectionView.backgroundColor = tracker.color
+        checkButton.backgroundColor = tracker.color
+        isCompletedToday = isCompleted
+        trackerId = tracker.id
+        self.indexPath = indexPath
+        checkButton.setImage(isCompletedToday ? UIImage(systemName: "checkmark") : UIImage(systemName: "plus"), for: .normal)
+    }
+   
+   
     private func addView() {
         [collectionView, emojiView, emojiLabel, trackerName, resultLabel, checkButton].forEach(setupView(_:))
     }
@@ -89,6 +113,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         addView()
         applyConstraints()
+        addSubview(checkButton)
     }
     
     required init?(coder: NSCoder) {

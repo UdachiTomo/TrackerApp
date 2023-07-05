@@ -8,21 +8,30 @@ class MockData {
         ])]
 }
 
-
-final class TrackersViewController: UIViewController, UITextFieldDelegate, CreateNewTrackerViewControllerProtocol {
+final class TrackersViewController: UIViewController, UITextFieldDelegate, ChooseTypeOfTrackerControllerProtocol {
     func createTracker(_ tracker: Tracker, categoryTitle: String) {
         let newTracker = TrackerCategory(title: categoryTitle, trackers: [tracker])
-        categories.append(newTracker)
+        if let index = categories.firstIndex(where: { $0.title == categoryTitle }) {
+            let array = categories[index].trackers + newTracker.trackers
+            let trackerCategory = TrackerCategory(title: categoryTitle, trackers: array)
+            categories[index] = trackerCategory
+        } else {
+            categories.append(newTracker)
+        }
         visibleCategories = categories
         updateVisibleCategories(visibleCategories)
-        print(visibleCategories)
+        trackersCollectionView.reloadData()
+        
     }
     
-    
-    private var categories: [TrackerCategory] = MockData.categories
+    private var categories: [TrackerCategory] = [] //MockData.categories
     private var trackers: [Tracker] = []
-    private var completedTrackers: [TrackerRecord] = []
+    private var completedTrackers: [TrackerRecord]? = []
     private var visibleCategories: [TrackerCategory] = []
+    private var isCompletedToday: Bool = false
+    private var trackerId: UUID? = nil
+    private var currentDate: Int?
+    private var searchText: String = ""
     
     private lazy var trackerLabel: UILabel = {
         let trackerLabel = UILabel()
@@ -43,6 +52,8 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Creat
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.locale = Locale(identifier: "ru_RU")
         return datePicker
     } ()
     
@@ -52,6 +63,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Creat
         searchTrackerField.layer.cornerRadius = 10
         searchTrackerField.layer.masksToBounds = true
         searchTrackerField.delegate = self
+        searchTrackerField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         return searchTrackerField
     } ()
     
@@ -73,27 +85,60 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Creat
     
     @objc private func createNewTrackers() {
         let viewController = ChooseTypeOfTrackerController()
+        viewController.delegate = self
         present(viewController, animated: true)
     }
     
     private func updateVisibleCategories(_ newCategory: [TrackerCategory]) {
         visibleCategories = newCategory
-        categories = visibleCategories
         trackersCollectionView.reloadData()
     }
     
-    private func setupUICell(_ cell: TrackersCollectionViewCell, withTracker tracker: Tracker) {
-        cell.emojiLabel.text = tracker.emoji
-        cell.trackerName.text = tracker.title
-        cell.collectionView.backgroundColor = tracker.color
-        cell.checkButton.backgroundColor = tracker.color
-        cell.checkButton.addTarget(self, action: #selector(method), for: .touchUpInside)
-    }
-    
-    
-    
     private func addView() {
         [trackerLabel, plugImage, searchTrackerField, datePicker,plusTrackerButton, trackersCollectionView].forEach(view.setupView(_:))
+    }
+    
+    private func isTrackerCompletedToday(id: UUID) -> Bool {
+        guard let completedTrackers = completedTrackers else { return false }
+        return completedTrackers.contains { trackerRecord in
+            let sameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: datePicker.date)
+            return trackerRecord.trackerId == id && sameDay
+        }
+    }
+    
+   @objc func filterTrackers(_ sender: UIDatePicker) {
+        let components = Calendar.current.dateComponents([.weekday], from: sender.date)
+        if let date = components.weekday {
+            currentDate = date
+            trackersCollectionView.reloadData()
+        }
+        
+    }
+    
+    @objc func textFieldChanged() {
+        guard let textField = searchTrackerField.text else { return }
+        let categories = visibleCategories
+        let newCategories = searchTracker(categories: categories, text: textField)
+        updateVisibleCategories(newCategories)
+    }
+    
+    func searchTracker(categories: [TrackerCategory], text: String) -> [TrackerCategory] {
+        var newCategories: [TrackerCategory] = []
+        
+        for category in categories {
+            var newCategory = TrackerCategory(title: category.title, trackers: [])
+            
+            for tracker in category.trackers {
+                if tracker.title.contains(text) {
+                    newCategory.trackers.append(tracker)
+                }
+            }
+            if !newCategory.trackers.isEmpty {
+                newCategories.append(newCategory)
+            }
+        }
+        
+        return newCategories
     }
     
     private func setNavBar() {
@@ -101,8 +146,8 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Creat
         let datePicker = UIBarButtonItem(customView: datePicker)
         self.navigationItem.leftBarButtonItem = plusTrackerButton
         self.navigationItem.rightBarButtonItem = datePicker
-        
     }
+    
     
     private func applyConstraints() {
         NSLayoutConstraint.activate([
@@ -131,21 +176,55 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Creat
     }
 }
 
+extension TrackersViewController: UITextViewDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        searchTrackerField.resignFirstResponder()
+    }
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        textField.text = ""
+        return true
+    }
+}
+
+extension TrackersViewController: TrackersCollectionViewCellDelegate {
+
+    func completedTracker(id: UUID, indexPath: IndexPath) {
+        let trackerRecord = TrackerRecord(trackerId: id, date: datePicker.date)
+        completedTrackers?.append(trackerRecord)
+        trackersCollectionView.reloadItems(at: [indexPath])
+    }
+    
+    func uncompleteTracker(id: UUID, at indexPath: IndexPath) {
+        completedTrackers?.removeAll { trackerRecord in
+            let isSameDay = Calendar.current.isDate(trackerRecord.date , inSameDayAs: datePicker.date)
+            return trackerRecord.trackerId == id && isSameDay
+        }
+        trackersCollectionView.reloadItems(at: [indexPath])
+    }
+}
+
+
 extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        let count = visibleCategories.count
+        let count = categories.count
         collectionView.isHidden = count == 0
         return count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return visibleCategories[section].trackers.count
+        return categories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.identifier, for: indexPath) as? TrackersCollectionViewCell else { return UICollectionViewCell() }
-        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        setupUICell(cell, withTracker: tracker)
+        let tracker =  categories[indexPath.section].trackers[indexPath.row]
+        guard let days = completedTrackers else { return UICollectionViewCell() }
+        cell.delegate = self
+        cell.bringSubviewToFront(cell.checkButton)
+        let isCompleted = isTrackerCompletedToday(id: tracker.id)
+        let completedCount = days.filter { $0.trackerId == tracker.id}.count
+        cell.setupCell(tracker: tracker, isCompleted: isCompleted, completedCount: completedCount, indexPath: indexPath)
         return cell
     }
     
@@ -185,7 +264,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         }
         
         guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackersSupplementaryView else { return UICollectionReusableView() }
-        view.titleLabel.text = visibleCategories[indexPath.section].title
+        view.titleLabel.text = categories[indexPath.section].title
         return view
     }
     
