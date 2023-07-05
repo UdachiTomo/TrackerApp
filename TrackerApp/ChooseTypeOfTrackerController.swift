@@ -1,6 +1,20 @@
 import UIKit
 
+protocol ChooseTypeOfTrackerControllerProtocol: AnyObject {
+    func createTracker(_ tracker: Tracker, categoryTitle: String)
+}
+
+extension ChooseTypeOfTrackerController: CreateNewTrackerViewControllerProtocol {
+    func createTracker(_ tracker: Tracker, categoryTitle: String) {
+        delegate?.createTracker(tracker, categoryTitle: categoryTitle)
+    }
+    
+
+}
+
 final class ChooseTypeOfTrackerController: UIViewController {
+   
+    public weak var delegate: ChooseTypeOfTrackerControllerProtocol?
     
     private lazy var headerLabel: UILabel = {
         let headerLabel = UILabel()
@@ -31,11 +45,13 @@ final class ChooseTypeOfTrackerController: UIViewController {
     
     @objc private func regularTapButton() {
         let viewController = CreateNewTrackerViewController(typeOfEvent: .regular)
+        viewController.delegate = self
         present(viewController, animated: true)
     }
     
     @objc private func irregularTapButton() {
         let viewController = CreateNewTrackerViewController(typeOfEvent: .irregular)
+        viewController.delegate = self
         present(viewController, animated: true)
     }
     

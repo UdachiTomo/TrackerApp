@@ -2,8 +2,10 @@ import UIKit
 
 extension UIColor {
     
+    
+    
     static var backgroundColor: UIColor { UIColor(named: "backgroundColor") ?? UIColor.red }
-    static var findColor: UIColor { UIColor(named: "findColor") ?? UIColor.gray }
+    static var ypLightGray: UIColor { UIColor(named: "yPlightGray") ?? UIColor.lightGray }
     static var ypGray: UIColor { UIColor(named: "ypGray") ?? UIColor.gray }
     static var ypRed: UIColor { UIColor(named: "ypRed") ?? UIColor.red }
     static var ypBlack: UIColor { UIColor(named: "ypBlack") ?? UIColor.black }
