@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE3E75922A5AF5340030CAAA /* Extesion Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3E75912A5AF5340030CAAA /* Extesion Int.swift */; };
 		CE6184952A56FA9B008D075A /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6184942A56FA9B008D075A /* StatisticViewController.swift */; };
 		CE9420632A3B5899001976A5 /* TrackerScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9420622A3B5899001976A5 /* TrackerScheduleViewController.swift */; };
 		CE9420652A3B59F9001976A5 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9420642A3B59F9001976A5 /* TrackerRecord.swift */; };
@@ -32,6 +33,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CE3E75912A5AF5340030CAAA /* Extesion Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extesion Int.swift"; sourceTree = "<group>"; };
 		CE6184942A56FA9B008D075A /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
 		CE9420622A3B5899001976A5 /* TrackerScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerScheduleViewController.swift; sourceTree = "<group>"; };
 		CE9420642A3B59F9001976A5 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				CED665192A57239700511E2B /* RoundedClass.swift */,
 				CEB4D34E2A265368004FAE43 /* Extension View.swift */,
 				CECDE5512A4B19010022AC50 /* Colors.swift */,
+				CE3E75912A5AF5340030CAAA /* Extesion Int.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 				CE6184952A56FA9B008D075A /* StatisticViewController.swift in Sources */,
 				CE9420692A3B5A1E001976A5 /* Tracker.swift in Sources */,
 				CECDE5502A4B104A0022AC50 /* TrackersCollectionVIewCell.swift in Sources */,
+				CE3E75922A5AF5340030CAAA /* Extesion Int.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -52,18 +52,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return checkButton
     } ()
     
-    func setupCell(tracker: Tracker, isCompleted: Bool, completedCount: Int, indexPath: IndexPath ) {
-        emojiLabel.text = tracker.emoji
-        trackerName.text = tracker.title
-        collectionView.backgroundColor = tracker.color
-        checkButton.backgroundColor = tracker.color
-        isCompletedToday = isCompleted
-        trackerId = tracker.id
-        self.indexPath = indexPath
-        checkButton.setImage(isCompletedToday ? UIImage(systemName: "checkmark") : UIImage(systemName: "plus"), for: .normal)
-    }
-   
-   
     private func addView() {
         [collectionView, emojiView, emojiLabel, trackerName, resultLabel, checkButton].forEach(setupView(_:))
     }
