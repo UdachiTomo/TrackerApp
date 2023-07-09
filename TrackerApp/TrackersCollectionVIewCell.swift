@@ -1,14 +1,8 @@
 import UIKit
 
-protocol TrackersCollectionViewCellDelegate: AnyObject {
-    func completedTracker(id: UUID, indexPath: IndexPath)
-    func uncompleteTracker(id: UUID, at indexPath: IndexPath)
-}
-
 final class TrackersCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "trackerCollectionViewCell"
-    public weak var delegate: TrackersCollectionViewCellDelegate?
     private var isCompletedToday: Bool = false
     private var trackerId: UUID? = nil
     private var indexPath: IndexPath?
@@ -49,25 +43,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return resultLabel
     } ()
     
-    lazy var checkButton: UIButton = {
-        let checkButton = UIButton()
+    lazy var checkButton: RoundedButton = {
+        let checkButton = RoundedButton(type: .system)
         let image = UIImage(systemName: "plus")
         checkButton.setImage(image, for: .normal)
         checkButton.tintColor = .white
         checkButton.layer.cornerRadius = 16
-        checkButton.addTarget(self, action: #selector(didTapCheckButton), for: .touchUpInside)
         return checkButton
     } ()
-    
-    @objc func didTapCheckButton() {
-        guard let id = trackerId,
-              let indexPath = indexPath else { return }
-        if isCompletedToday {
-            delegate?.completedTracker(id: id, indexPath: indexPath)
-        } else {
-            delegate?.uncompleteTracker(id: id, at: indexPath)
-        }
-    }
     
     func setupCell(tracker: Tracker, isCompleted: Bool, completedCount: Int, indexPath: IndexPath ) {
         emojiLabel.text = tracker.emoji
@@ -140,10 +123,9 @@ class TrackersSupplementaryView: UICollectionReusableView {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
-            titleLabel.heightAnchor.constraint(equalToConstant: 18)
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     

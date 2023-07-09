@@ -97,6 +97,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         tableView.dataSource = self
         tableView.delegate = self
         tableView.layer.cornerRadius = 8
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 345, bottom: 0, right: 345)
         return tableView
     } ()
     
@@ -180,7 +181,6 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         applyConstraints()
         setupButtonStack()
         view.addSubview(buttonStack)
-        self.tableView.layer.cornerRadius = 8
     }
 }
 
@@ -200,7 +200,9 @@ extension CreateNewTrackerViewController: UITableViewDelegate, UITableViewDataSo
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return eventButtons.count
+        let count = eventButtons.count
+        tableView.isHidden = count == 0
+        return count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -210,15 +212,18 @@ extension CreateNewTrackerViewController: UITableViewDelegate, UITableViewDataSo
         cell.firstLabel.text = eventButtons[indexPath.row]
         if indexPath.row == 0 {
             cell.secondLabel.text = categoryTitle
+            
         }
         if indexPath.row == 1 {
             cell.secondLabel.text = scheduleTitle
+            cell.separatorInset =  UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
         }
+    
         cell.accessoryType = .disclosureIndicator
+        
         return cell
     }
 }
-
 final class CustomTableViewCell: UITableViewCell {
     
     static let identifier = "CustomCell"
@@ -227,6 +232,7 @@ final class CustomTableViewCell: UITableViewCell {
         let firstLabel = UILabel()
         firstLabel.font = UIFont.systemFont(ofSize: 17)
         firstLabel.textColor = .black
+        
         firstLabel.textAlignment = .left
         return firstLabel
     } ()
@@ -262,10 +268,18 @@ final class CustomTableViewCell: UITableViewCell {
     }
     
     private func applyConstraints() {
-        NSLayoutConstraint.activate([
-            labelStack.centerYAnchor.constraint(equalTo: centerYAnchor),
-            labelStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
-        ])
+        if ((secondLabel.text?.isEmpty) == nil) {
+            NSLayoutConstraint.activate([
+                labelStack.topAnchor.constraint(equalTo: topAnchor, constant: 26),
+                labelStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
+            ])
+        } else if ((secondLabel.text?.isEmpty) != nil) {
+            NSLayoutConstraint.activate([
+                labelStack.centerXAnchor.constraint(equalTo: centerXAnchor),
+                labelStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
+            ])
+        }
+        
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

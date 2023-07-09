@@ -11,14 +11,15 @@ final class TabBarController: UITabBarController {
     
     private func setupViewControllers() {
         viewControllers = [
-            createNavController(for: TrackersViewController(), title: "", image: UIImage(named: "record_circle_fill") ?? UIImage()),
-            createNavController(for: TrackersViewController(), title: "", image: UIImage(named: "hare_fill") ?? UIImage())
+            createNavController(for: TrackersViewController(), title: "Трекеры", image: UIImage(named: "record_circle_fill") ?? UIImage()),
+            createNavController(for: StatisticViewController(), title: "Статистика", image: UIImage(named: "hare_fill") ?? UIImage())
         ]
     }
     
     private func setupTabBar() {
         let appearance = UITabBarAppearance()
-        appearance.selectionIndicatorTintColor = .blue
+        appearance.selectionIndicatorTintColor = .ypBlue
+        
     }
     
     fileprivate func createNavController(for rootViewController: UIViewController,
@@ -28,7 +29,6 @@ final class TabBarController: UITabBarController {
             navController.tabBarItem.title = title
             navController.tabBarItem.image = image
             navController.navigationBar.prefersLargeTitles = true
-            rootViewController.navigationItem.title = title
             return navController
         }
 }

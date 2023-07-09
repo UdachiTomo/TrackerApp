@@ -35,7 +35,7 @@ final class ChooseTypeOfTrackerController: UIViewController {
     
     private lazy var irregularButton: UIButton = {
         let irregularButton = UIButton()
-        irregularButton.setTitle("Регулярное событие", for: .normal)
+        irregularButton.setTitle("Нерегулярное событие", for: .normal)
         irregularButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         irregularButton.backgroundColor = .black
         irregularButton.layer.cornerRadius = 16
