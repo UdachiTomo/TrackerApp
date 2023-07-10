@@ -232,7 +232,6 @@ final class CustomTableViewCell: UITableViewCell {
         let firstLabel = UILabel()
         firstLabel.font = UIFont.systemFont(ofSize: 17)
         firstLabel.textColor = .black
-        
         firstLabel.textAlignment = .left
         return firstLabel
     } ()

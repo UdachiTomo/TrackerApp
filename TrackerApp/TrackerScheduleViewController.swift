@@ -65,7 +65,7 @@ final class TrackerScheduleViewController: UIViewController, WeekDayTableViewCel
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 38),
-            tableView.bottomAnchor.constraint(equalTo: finishButton.topAnchor, constant: -8),
+            tableView.bottomAnchor.constraint(equalTo: finishButton.topAnchor, constant: -62),
             finishButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             finishButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             finishButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
@@ -105,7 +105,6 @@ extension TrackerScheduleViewController: UITableViewDelegate, UITableViewDataSou
         }
         let weekDay = WeekDay.allCases[indexPath.row]
         cell.delegate = self
-        cell.contentView.backgroundColor = .systemBackground
         cell.weekDay = weekDay
         cell.label.text = weekDay.fullName
         return cell
@@ -151,7 +150,7 @@ class WeekDayTableViewCell: UITableViewCell {
     }
     
     private func setupUI() {
-        backgroundColor = .systemBackground
+        contentView.backgroundColor = .ypLightGray
         contentView.addSubview(switchDay)
         contentView.addSubview(label)
     }

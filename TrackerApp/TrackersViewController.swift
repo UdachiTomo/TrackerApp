@@ -10,16 +10,15 @@ class MockData {
 
 final class TrackersViewController: UIViewController, UITextFieldDelegate, ChooseTypeOfTrackerControllerProtocol {
     
-    private var categories: [TrackerCategory] = MockData.categories
+    private var categories: [TrackerCategory] = [] //MockData.categories
     private var trackers: [Tracker] = []
-    private var completedTrackers: Set<TrackerRecord> = []
+    private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
-    private var isCompletedToday: Bool = false
+    private var isCompletedToday: Bool = true
     private var trackerId: UUID? = nil
     private var currentDate: Int?
     private var searchText: String = ""
-    private let todayDate = Date()
-
+    
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -30,7 +29,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     private lazy var trackerLabel: UILabel = {
         let trackerLabel = UILabel()
         trackerLabel.text = "Трекеры"
-        trackerLabel.textColor = .black
+        trackerLabel.textColor = .ypBlack
         trackerLabel.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         return trackerLabel
     } ()
@@ -93,7 +92,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         viewController.delegate = self
         present(viewController, animated: true)
     }
-
+    
     
     @objc func dateChanged(_ sender: UIDatePicker) {
         let components = Calendar.current.dateComponents([.weekday], from: sender.date)
@@ -105,21 +104,9 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     
     @objc func textFieldChanged() {
         searchText = searchTrackerField.text ?? ""
+        plugImage.image = searchText.isEmpty ? UIImage(named: "plug_image") : UIImage(named: "error")
+        plugLabel.text = searchText.isEmpty ? "Что будем отслеживать?" : "Ничего не найдено"
         updateCategories()
-    }
-    
-    @objc func trackerCompleteButtonTapped(_ sender: UIButton) {
-        guard let cell = sender.superview as? TrackersCollectionViewCell,
-              let indexPath = trackersCollectionView.indexPath(for: cell) else { return }
-        let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
-        //guard todayDate < Date() || ((tracker.schedule?.isEmpty) != nil) else { return }
-        let trackerRecord = createTrackerRecord(with: tracker.id)
-        if completedTrackers.contains(trackerRecord) {
-            completedTrackers.remove(trackerRecord)
-        } else {
-            completedTrackers.insert(trackerRecord)
-        }
-        cell.resultLabel.text = setupCounterTextLabel(trackerID: tracker.id)
     }
     
     func createTracker(_ tracker: Tracker, categoryTitle: String) {
@@ -139,6 +126,11 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     private func updateVisibleCategories(_ newCategory: [TrackerCategory]) {
         visibleCategories = newCategory
         trackersCollectionView.reloadData()
+    }
+    
+    private func setDayOfWeek() {
+        let components = Calendar.current.dateComponents([.weekday], from: Date())
+        currentDate = components.weekday
     }
     
     private func addView() {
@@ -165,35 +157,6 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         trackersCollectionView.reloadData()
     }
     
-    private func setupUICell(_ cell: TrackersCollectionViewCell, withTracker tracker: Tracker) {
-        cell.emojiLabel.text = tracker.emoji
-        cell.trackerName.text = tracker.title
-        cell.collectionView.backgroundColor = tracker.color
-        cell.checkButton.backgroundColor = tracker.color
-        let trackerRecord = createTrackerRecord(with: tracker.id)
-        let isCompleted = completedTrackers.contains(trackerRecord)
-        cell.checkButton.toggled = isCompleted
-        cell.checkButton.addTarget(self, action: #selector(trackerCompleteButtonTapped(_:)), for: .touchUpInside)
-        cell.resultLabel.text = setupCounterTextLabel(trackerID: tracker.id)
-    }
-
-    private func setupCounterTextLabel(trackerID: UUID) -> String {
-        let count = completedTrackers.filter { $0.trackerId == trackerID }.count
-        let lastDigit = count % 10
-        var text: String
-        text = count.days()
-        return("\(text)")
-    }
-    
-    private func createTrackerRecord(with id: UUID) -> TrackerRecord {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .none
-        let date = dateFormatter.string(from: todayDate)
-        let trackerRecord = TrackerRecord(trackerId: id, date: date)
-        return trackerRecord
-    }
-    
     private func setNavBar() {
         let plusTrackerButton = UIBarButtonItem(customView: plusTrackerButton)
         let datePicker = UIBarButtonItem(customView: datePicker)
@@ -212,9 +175,10 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
             searchTrackerField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             searchTrackerField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             searchTrackerField.topAnchor.constraint(equalTo: view.topAnchor, constant: 136),
+            searchTrackerField.heightAnchor.constraint(equalToConstant: 36),
             datePicker.topAnchor.constraint(equalTo: view.topAnchor, constant: 91),
             datePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            trackersCollectionView.topAnchor.constraint(equalTo: searchTrackerField.bottomAnchor, constant: 10),
+            trackersCollectionView.topAnchor.constraint(equalTo: searchTrackerField.bottomAnchor, constant: 24),
             trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -230,13 +194,28 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     }
 }
 
+extension TrackersViewController: TrackersCollectionViewCellDelegate {
+    func completedTracker(id: UUID) {
+        if let index = completedTrackers.firstIndex(where: { record in
+            record.trackerId == id &&
+            record.date.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
+        }) {
+            completedTrackers.remove(at: index)
+        } else {
+            completedTrackers.append(TrackerRecord(trackerId: id, date: datePicker.date))
+        }
+        trackersCollectionView.reloadData()
+    }
+}
+
 extension TrackersViewController: UITextViewDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         searchTrackerField.resignFirstResponder()
     }
     
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        textField.text = ""
+        searchTrackerField.text = ""
+        updateCategories()
         return true
     }
     
@@ -245,7 +224,6 @@ extension TrackersViewController: UITextViewDelegate {
         searchText = searchTextField
         updateCategories()
     }
-    
 }
 
 
@@ -263,7 +241,24 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.identifier, for: indexPath) as? TrackersCollectionViewCell else { return UICollectionViewCell() }
         let tracker =  visibleCategories[indexPath.section].trackers[indexPath.row]
-        setupUICell(cell, withTracker: tracker)
+        cell.delegate = self
+        let isCompleted = completedTrackers.contains(where: { record in
+            record.trackerId == tracker.id &&
+            record.date.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
+        })
+        let isEnabled = datePicker.date < Date() || Date().yearMonthDayComponents == datePicker.date.yearMonthDayComponents
+        let completedCount = completedTrackers.filter({ record in
+            record.trackerId == tracker.id
+        }).count
+        cell.configure(
+            tracker.id,
+            title: tracker.title,
+            color: tracker.color,
+            emoji: tracker.emoji,
+            isCompleted: isCompleted,
+            isEnabled: isEnabled,
+            completedCount: completedCount
+        )
         return cell
     }
     

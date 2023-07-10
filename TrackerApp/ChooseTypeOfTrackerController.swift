@@ -61,7 +61,7 @@ final class ChooseTypeOfTrackerController: UIViewController {
     
     private func applyConstraints() {
         NSLayoutConstraint.activate([
-            headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 78),
+            headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             headerLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 114),
             regularButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             regularButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),

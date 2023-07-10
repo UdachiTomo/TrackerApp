@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CE3E75922A5AF5340030CAAA /* Extesion Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3E75912A5AF5340030CAAA /* Extesion Int.swift */; };
+		CE3E75942A5C3CCE0030CAAA /* Extension Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3E75932A5C3CCE0030CAAA /* Extension Date.swift */; };
 		CE6184952A56FA9B008D075A /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6184942A56FA9B008D075A /* StatisticViewController.swift */; };
 		CE9420632A3B5899001976A5 /* TrackerScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9420622A3B5899001976A5 /* TrackerScheduleViewController.swift */; };
 		CE9420652A3B59F9001976A5 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9420642A3B59F9001976A5 /* TrackerRecord.swift */; };
@@ -29,11 +30,11 @@
 		CEB4D3562A27AED4004FAE43 /* CreateNewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB4D3552A27AED4004FAE43 /* CreateNewTrackerViewController.swift */; };
 		CECDE5502A4B104A0022AC50 /* TrackersCollectionVIewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECDE54F2A4B104A0022AC50 /* TrackersCollectionVIewCell.swift */; };
 		CECDE5522A4B19010022AC50 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECDE5512A4B19010022AC50 /* Colors.swift */; };
-		CED6651A2A57239700511E2B /* RoundedClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED665192A57239700511E2B /* RoundedClass.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CE3E75912A5AF5340030CAAA /* Extesion Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extesion Int.swift"; sourceTree = "<group>"; };
+		CE3E75932A5C3CCE0030CAAA /* Extension Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension Date.swift"; sourceTree = "<group>"; };
 		CE6184942A56FA9B008D075A /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
 		CE9420622A3B5899001976A5 /* TrackerScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerScheduleViewController.swift; sourceTree = "<group>"; };
 		CE9420642A3B59F9001976A5 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
@@ -57,7 +58,6 @@
 		CEB4D3552A27AED4004FAE43 /* CreateNewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewTrackerViewController.swift; sourceTree = "<group>"; };
 		CECDE54F2A4B104A0022AC50 /* TrackersCollectionVIewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersCollectionVIewCell.swift; sourceTree = "<group>"; };
 		CECDE5512A4B19010022AC50 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
-		CED665192A57239700511E2B /* RoundedClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedClass.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,10 +115,10 @@
 		CEB4D34D2A2652F6004FAE43 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				CED665192A57239700511E2B /* RoundedClass.swift */,
 				CEB4D34E2A265368004FAE43 /* Extension View.swift */,
 				CECDE5512A4B19010022AC50 /* Colors.swift */,
 				CE3E75912A5AF5340030CAAA /* Extesion Int.swift */,
+				CE3E75932A5C3CCE0030CAAA /* Extension Date.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -206,7 +206,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE94206D2A3B5C88001976A5 /* TrackerService.swift in Sources */,
-				CED6651A2A57239700511E2B /* RoundedClass.swift in Sources */,
 				CECDE5522A4B19010022AC50 /* Colors.swift in Sources */,
 				CEB4D34C2A264F52004FAE43 /* SplashViewController.swift in Sources */,
 				CEB4D33C2A264067004FAE43 /* TapBarController.swift in Sources */,
@@ -220,6 +219,7 @@
 				CEB4D3562A27AED4004FAE43 /* CreateNewTrackerViewController.swift in Sources */,
 				CEB4D33A2A264067004FAE43 /* SceneDelegate.swift in Sources */,
 				CE94206F2A3B7BE2001976A5 /* TrackerCategoryViewController.swift in Sources */,
+				CE3E75942A5C3CCE0030CAAA /* Extension Date.swift in Sources */,
 				CE9420672A3B5A0E001976A5 /* TrackerCategory.swift in Sources */,
 				CE6184952A56FA9B008D075A /* StatisticViewController.swift in Sources */,
 				CE9420692A3B5A1E001976A5 /* Tracker.swift in Sources */,
