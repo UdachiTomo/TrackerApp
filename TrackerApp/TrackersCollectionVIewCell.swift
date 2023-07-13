@@ -1,7 +1,7 @@
 import UIKit
 
 protocol TrackersCollectionViewCellDelegate: AnyObject {
-    
+    func completedTracker(id: UUID)
 }
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
@@ -10,11 +10,11 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     public weak var delegate: TrackersCollectionViewCellDelegate?
     private var isCompletedToday: Bool = false
     private var trackerId: UUID? = nil
+    private var indexPath: IndexPath?
     
     lazy var collectionView: UIView = {
         let collectionView = UIView()
         collectionView.layer.cornerRadius = 16
-        
         return collectionView
     } ()
     
@@ -36,7 +36,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let trackerName = UILabel()
         trackerName.font = UIFont.systemFont(ofSize: 12)
         trackerName.textAlignment = .left
-        trackerName.sizeToFit()
+        trackerName.adjustsFontSizeToFitWidth = true
+        trackerName.minimumScaleFactor = 0.5
         trackerName.numberOfLines = 2
         return trackerName
     } ()
@@ -49,13 +50,19 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     } ()
     
     lazy var checkButton: UIButton = {
-        let checkButton = UIButton()
+        let checkButton = UIButton(type: .system)
         let image = UIImage(systemName: "plus")
         checkButton.setImage(image, for: .normal)
         checkButton.tintColor = .white
         checkButton.layer.cornerRadius = 16
+        checkButton.addTarget(self, action: #selector(didTapCheckButton), for: .touchUpInside)
         return checkButton
     } ()
+    
+    @objc private func didTapCheckButton() {
+        guard let id = trackerId else { return }
+        delegate?.completedTracker(id: id)
+    }
     
     private func addView() {
         [collectionView, emojiView, emojiLabel, trackerName, resultLabel, checkButton].forEach(setupView(_:))
@@ -73,7 +80,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             emojiView.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor, constant: 12),
             emojiLabel.centerXAnchor.constraint(equalTo: emojiView.centerXAnchor),
             emojiLabel.centerYAnchor.constraint(equalTo: emojiView.centerYAnchor),
-            trackerName.topAnchor.constraint(equalTo: collectionView.topAnchor, constant: 44),
+            trackerName.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: -6),
             trackerName.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor, constant: 12),
             trackerName.heightAnchor.constraint(equalToConstant: 34),
             checkButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 8),
@@ -85,10 +92,45 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         ])
     }
     
+    func configure(
+        _ id: UUID,
+        title: String,
+        color: UIColor,
+        emoji: String,
+        isCompleted: Bool,
+        isEnabled: Bool,
+        completedCount: Int
+    ) {
+        let mod10 = completedCount % 10
+        let mod100 = completedCount % 100
+        let not10To20 = mod100 < 10 || mod100 > 20
+        var str = "\(completedCount) "
+        
+        trackerId = id
+        trackerName.text = title
+        collectionView.backgroundColor = color
+        checkButton.backgroundColor = color
+        emojiLabel.text = emoji
+        isCompletedToday = isCompleted
+        checkButton.setImage(isCompletedToday ? UIImage(systemName: "checkmark")! : UIImage(systemName: "plus")!, for: .normal)
+        checkButton.isEnabled = isEnabled
+        if completedCount == 0 {
+            str += "дней"
+        } else if mod10 == 1 && not10To20 {
+            str += "день"
+        } else if (mod10 == 2 || mod10 == 3 || mod10 == 4) && not10To20 {
+            str += "дня"
+        } else {
+            str += "дней"
+        }
+        resultLabel.text = str
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addView()
         applyConstraints()
+        addSubview(checkButton)
     }
     
     required init?(coder: NSCoder) {
@@ -102,7 +144,7 @@ class TrackersSupplementaryView: UICollectionReusableView {
     
     var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.font = .boldSystemFont(ofSize: 19)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -116,9 +158,8 @@ class TrackersSupplementaryView: UICollectionReusableView {
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
-            titleLabel.heightAnchor.constraint(equalToConstant: 18)
+            titleLabel.topAnchor.constraint(equalTo: topAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
         ])
     }
     

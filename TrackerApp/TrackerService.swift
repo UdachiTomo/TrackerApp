@@ -13,14 +13,14 @@ final class TrackerService {
     var trackers: [Tracker] = []
     //var schedule: [WeekDay] = []
     
-    func createTracker(title: String, schedule: [WeekDay], categoryTitle: String) {
-        let tracker = TrackerCategory(title: categoryTitle,
-                                      trackers: [Tracker(id: UUID(),
-                                                         title: title,
-                                                         color: .color1,
-                                                         emoji: "🙂",
-                                                         schedule: schedule)])
-        delegate?.addTrackers(trackersCategory: tracker)
-        print(tracker)
+    //    func createTracker(title: String, schedule: [WeekDay.RawValue], categoryTitle: String) {
+    //        let tracker = TrackerCategory(title: categoryTitle,
+    //                                      trackers: [Tracker(id: UUID(),
+    //                                                         title: title,
+    //                                                         color: .color1,
+    //                                                         emoji: "🙂",
+    //                                                         schedule: schedule.)])
+    //        delegate?.addTrackers(trackersCategory: tracker)
+    //        print(tracker)
+//      }
     }
-}

@@ -1,7 +1,7 @@
 import UIKit
 
 protocol CreateNewTrackerViewControllerProtocol: AnyObject {
-    func createTracker(_ tracker: Tracker, categoryTitle: String)
+        func createTracker(_ tracker: Tracker, categoryTitle: String)
 }
 
 final class CreateNewTrackerViewController: UIViewController, TrackerScheduleViewControllerDelegate, TrackerCategoryViewControllerProtocol {
@@ -18,6 +18,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         scheduleTitle = scheduleString == "Пн, Вт, Ср, Чт, Пт, Сб, Вс" ? "Каждый день" : scheduleString
         tableView.reloadData()
     }
+
     public weak var delegate: CreateNewTrackerViewControllerProtocol?
     private var trackerService = TrackerService.shared
     private var typeOfEvent: TypeOfEvent
@@ -60,7 +61,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         let titleTrackerTextField = UITextField()
         titleTrackerTextField.placeholder = "Введите название трекера"
         titleTrackerTextField.clearButtonMode = .whileEditing
-        titleTrackerTextField.backgroundColor = .systemBackground
+        titleTrackerTextField.backgroundColor = .ypLightGray
         titleTrackerTextField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         titleTrackerTextField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         titleTrackerTextField.leftViewMode = .always
@@ -74,8 +75,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         addTrackerButton.setTitle("Создать", for: .normal)
         addTrackerButton.setTitleColor(.white, for: .normal)
         addTrackerButton.layer.cornerRadius = 16
-        addTrackerButton.layer.borderWidth = 1
-        addTrackerButton.backgroundColor = .gray
+        addTrackerButton.backgroundColor = .ypGray
         addTrackerButton.addTarget(self, action: #selector(didTapAddTrackerButton), for: .touchUpInside)
         return addTrackerButton
     } ()
@@ -83,7 +83,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     private lazy var cancerTrackerButton: UIButton = {
         let cancerTrackerButton = UIButton()
         cancerTrackerButton.setTitle("Отменить", for: .normal)
-        cancerTrackerButton.setTitleColor(.red, for: .normal)
+        cancerTrackerButton.setTitleColor(.ypRed, for: .normal)
         cancerTrackerButton.layer.cornerRadius = 16
         cancerTrackerButton.layer.borderWidth = 1
         cancerTrackerButton.layer.borderColor = UIColor.red.cgColor
@@ -96,14 +96,14 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: CustomTableViewCell.identifier)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.layer.cornerRadius = 16
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.layer.cornerRadius = 8
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 345, bottom: 0, right: 345)
         return tableView
     } ()
     
     private lazy var buttonStack: UIStackView = {
         let buttonStack = UIStackView()
-        //buttonStack.alignment = .fill
+        buttonStack.alignment = .fill
         buttonStack.axis = .horizontal
         buttonStack.distribution = .fillEqually
         buttonStack.spacing = 8
@@ -122,13 +122,8 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     
     @objc func didTapAddTrackerButton() {
         let tracker = Tracker(id: UUID(), title: titleTrackerTextField.text ?? "", color: .color1, emoji: "🌚", schedule: schedule)
-        let vc = TrackersViewController()
-        vc.createTracker(tracker, categoryTitle: categoryTitle)
-        navigationController?.pushViewController(vc, animated: true)
-        guard let firstScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
-        guard let firstWindow = firstScene.windows.first else { return }
-        let view = firstWindow.rootViewController
-        view?.dismiss(animated: true)
+        delegate?.createTracker(tracker, categoryTitle: categoryTitle)
+        self.view.window?.rootViewController?.dismiss(animated: true)
     }
     
     @objc private func didTapCancelTrackerButton() {
@@ -171,7 +166,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 38),
-            tableView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -8),
+            tableView.heightAnchor.constraint(equalToConstant: 150),
             buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             buttonStack.heightAnchor.constraint(equalToConstant: 60),
@@ -205,7 +200,9 @@ extension CreateNewTrackerViewController: UITableViewDelegate, UITableViewDataSo
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return eventButtons.count
+        let count = eventButtons.count
+        tableView.isHidden = count == 0
+        return count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -215,15 +212,18 @@ extension CreateNewTrackerViewController: UITableViewDelegate, UITableViewDataSo
         cell.firstLabel.text = eventButtons[indexPath.row]
         if indexPath.row == 0 {
             cell.secondLabel.text = categoryTitle
+            
         }
         if indexPath.row == 1 {
             cell.secondLabel.text = scheduleTitle
+            cell.separatorInset =  UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
         }
+    
         cell.accessoryType = .disclosureIndicator
+        
         return cell
     }
 }
-
 final class CustomTableViewCell: UITableViewCell {
     
     static let identifier = "CustomCell"
@@ -243,23 +243,50 @@ final class CustomTableViewCell: UITableViewCell {
         return secondLabel
     } ()
     
+    private lazy var labelStack: UIStackView = {
+        let labelStack = UIStackView()
+        labelStack.alignment = .fill
+        labelStack.axis = .vertical
+        labelStack.distribution = .fillEqually
+        labelStack.spacing = 5
+        return labelStack
+    } ()
+    
+    private func setupButtonStack() {
+        labelStack.addArrangedSubview(firstLabel)
+        labelStack.addArrangedSubview(secondLabel)
+    }
+    
+    private func setupTableView() {
+        addSubview(labelStack)
+        backgroundColor = .ypLightGray
+    }
+    
     private func addView() {
-        [firstLabel, secondLabel].forEach(setupView(_:))
+        [labelStack].forEach(setupView(_:))
     }
     
     private func applyConstraints() {
-        NSLayoutConstraint.activate([
-            firstLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            firstLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            secondLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            secondLabel.topAnchor.constraint(equalTo: firstLabel.bottomAnchor, constant: -4)
-        ])
+        if ((secondLabel.text?.isEmpty) == nil) {
+            NSLayoutConstraint.activate([
+                labelStack.topAnchor.constraint(equalTo: topAnchor, constant: 26),
+                labelStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
+            ])
+        } else if ((secondLabel.text?.isEmpty) != nil) {
+            NSLayoutConstraint.activate([
+                labelStack.centerXAnchor.constraint(equalTo: centerXAnchor),
+                labelStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
+            ])
+        }
+        
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: CustomTableViewCell.identifier)
         addView()
         applyConstraints()
+        setupButtonStack()
+        setupTableView()
     }
     
     required init?(coder: NSCoder) {

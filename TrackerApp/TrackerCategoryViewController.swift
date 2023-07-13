@@ -8,7 +8,7 @@ final class TrackerCategoryViewController: UIViewController {
     var trackerService: TrackerService?
     weak var delegate: TrackerCategoryViewControllerProtocol?
     private var selectedIndexes: IndexPath?
-    private let mockCategory = ["Важное", "Питомец"]
+    private var mockCategory = ["Важное", "Питомец"]
     private lazy var headerLabel: UILabel = {
         let headerLabel = UILabel()
         headerLabel.text = "Категория"
@@ -21,8 +21,9 @@ final class TrackerCategoryViewController: UIViewController {
         tableView.register(TrackerCategoryTableViewCell.self, forCellReuseIdentifier: TrackerCategoryTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.layer.cornerRadius = 16
+        tableView.layer.cornerRadius = 8
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
         return tableView
     } ()
     
@@ -51,7 +52,7 @@ final class TrackerCategoryViewController: UIViewController {
     }
     
     private func addView() {
-        [headerLabel, tableView, addCategoryButton].forEach(view.setupView(_:))
+        [headerLabel, tableView, addCategoryButton, placeholderLabel].forEach(view.setupView(_:))
     }
     
     private func applyConstraints () {
@@ -65,8 +66,9 @@ final class TrackerCategoryViewController: UIViewController {
             addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             addCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
-            addCategoryButton.heightAnchor.constraint(equalToConstant: 60)
-            
+            addCategoryButton.heightAnchor.constraint(equalToConstant: 60),
+            placeholderLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            placeholderLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 342)
         ])
     }
     
@@ -81,11 +83,10 @@ final class TrackerCategoryViewController: UIViewController {
 extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if mockCategory.isEmpty {
-            return 1
+            return 0
         } else {
             return mockCategory.count
         }
-        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -96,13 +97,18 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TrackerCategoryTableViewCell.identifier, for: indexPath) as? TrackerCategoryTableViewCell else {
             return UITableViewCell()
         }
+        if tableView.numberOfRows(inSection: indexPath.section) - 1 == indexPath.row {
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
+        }
         if let selectedIndexes = selectedIndexes, selectedIndexes == indexPath {
             cell.accessoryType = .checkmark
+            cell.tintColor = .ypBlue
         } else {
             cell.accessoryType = .none
         }
         cell.selectionStyle = .none
         cell.label.text = mockCategory[indexPath.row]
+    
         return cell
     }
     
@@ -110,8 +116,7 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
         selectedIndexes = indexPath
         tableView.deselectRow(at: indexPath, animated: true)
         let category = mockCategory[indexPath.row]
-        print(category)
-        delegate?.addCategoryInTracker(category: category)
+        delegate?.addCategoryInTracker(category: category )
         tableView.reloadData()
     }
     
@@ -135,6 +140,7 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
             super.init(style: style, reuseIdentifier: TrackerCategoryTableViewCell.identifier)
             addView()
             applyConstraints()
+            backgroundColor = .ypLightGray
         }
         
         required init?(coder: NSCoder) {

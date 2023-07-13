@@ -65,7 +65,7 @@ final class TrackerScheduleViewController: UIViewController, WeekDayTableViewCel
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 38),
-            tableView.bottomAnchor.constraint(equalTo: finishButton.topAnchor, constant: -8),
+            tableView.bottomAnchor.constraint(equalTo: finishButton.topAnchor, constant: -62),
             finishButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             finishButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             finishButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
@@ -100,9 +100,11 @@ extension TrackerScheduleViewController: UITableViewDelegate, UITableViewDataSou
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeekDayTableViewCell.identifier) as? WeekDayTableViewCell else {
             return UITableViewCell()
         }
+        if tableView.numberOfRows(inSection: indexPath.section) - 1 == indexPath.row {
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
+        }
         let weekDay = WeekDay.allCases[indexPath.row]
         cell.delegate = self
-        cell.contentView.backgroundColor = .systemBackground
         cell.weekDay = weekDay
         cell.label.text = weekDay.fullName
         return cell
@@ -131,7 +133,7 @@ class WeekDayTableViewCell: UITableViewCell {
         let switchDay = UISwitch()
         switchDay.translatesAutoresizingMaskIntoConstraints = false
         switchDay.isOn = false
-        switchDay.onTintColor = .blue
+        switchDay.onTintColor = .ypBlue
         switchDay.addTarget(self, action: #selector(switchValueChange), for: .valueChanged)
         return switchDay
     } ()
@@ -148,7 +150,7 @@ class WeekDayTableViewCell: UITableViewCell {
     }
     
     private func setupUI() {
-        backgroundColor = .systemBackground
+        contentView.backgroundColor = .ypLightGray
         contentView.addSubview(switchDay)
         contentView.addSubview(label)
     }

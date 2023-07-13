@@ -1,6 +1,20 @@
 import UIKit
 
+protocol ChooseTypeOfTrackerControllerProtocol: AnyObject {
+    func createTracker(_ tracker: Tracker, categoryTitle: String)
+}
+
+extension ChooseTypeOfTrackerController: CreateNewTrackerViewControllerProtocol {
+    func createTracker(_ tracker: Tracker, categoryTitle: String) {
+        delegate?.createTracker(tracker, categoryTitle: categoryTitle)
+    }
+    
+
+}
+
 final class ChooseTypeOfTrackerController: UIViewController {
+   
+    public weak var delegate: ChooseTypeOfTrackerControllerProtocol?
     
     private lazy var headerLabel: UILabel = {
         let headerLabel = UILabel()
@@ -21,7 +35,7 @@ final class ChooseTypeOfTrackerController: UIViewController {
     
     private lazy var irregularButton: UIButton = {
         let irregularButton = UIButton()
-        irregularButton.setTitle("Регулярное событие", for: .normal)
+        irregularButton.setTitle("Нерегулярное событие", for: .normal)
         irregularButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         irregularButton.backgroundColor = .black
         irregularButton.layer.cornerRadius = 16
@@ -31,11 +45,13 @@ final class ChooseTypeOfTrackerController: UIViewController {
     
     @objc private func regularTapButton() {
         let viewController = CreateNewTrackerViewController(typeOfEvent: .regular)
+        viewController.delegate = self
         present(viewController, animated: true)
     }
     
     @objc private func irregularTapButton() {
         let viewController = CreateNewTrackerViewController(typeOfEvent: .irregular)
+        viewController.delegate = self
         present(viewController, animated: true)
     }
     
@@ -45,7 +61,7 @@ final class ChooseTypeOfTrackerController: UIViewController {
     
     private func applyConstraints() {
         NSLayoutConstraint.activate([
-            headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 78),
+            headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             headerLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 114),
             regularButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             regularButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),

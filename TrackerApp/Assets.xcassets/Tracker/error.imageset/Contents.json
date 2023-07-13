@@ -1,16 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Property 1=Plus.svg",
+      "filename" : "2@1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "2@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Property 1=Plus@3x.png",
+      "filename" : "2@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
@@ -18,8 +19,5 @@
   "info" : {
     "author" : "xcode",
     "version" : 1
-  },
-  "properties" : {
-    "template-rendering-intent" : "template"
   }
 }
