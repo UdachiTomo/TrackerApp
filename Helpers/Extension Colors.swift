@@ -2,8 +2,6 @@ import UIKit
 
 extension UIColor {
     
-    
-    
     static var backgroundColor: UIColor { UIColor(named: "backgroundColor") ?? UIColor.red }
     static var ypLightGray: UIColor { UIColor(named: "yPlightGray") ?? UIColor.lightGray }
     static var ypGray: UIColor { UIColor(named: "ypGray") ?? UIColor.gray }
@@ -28,4 +26,17 @@ extension UIColor {
     static var color16: UIColor { UIColor(named: "Color16") ?? UIColor.red }
     static var color17: UIColor { UIColor(named: "Color17") ?? UIColor.red }
     static var color18: UIColor { UIColor(named: "Color18") ?? UIColor.red }
+    
+    var hexString: String {
+        let components = self.cgColor.components
+        let r: CGFloat = components?[0] ?? 0.0
+        let g: CGFloat = components?[1] ?? 0.0
+        let b: CGFloat = components?[2] ?? 0.0
+        return String.init(
+            format: "%02lX%02lX%02lX",
+            lroundf(Float(r * 255)),
+            lroundf(Float(g * 255)),
+            lroundf(Float(b * 255))
+        )
+    }
 }

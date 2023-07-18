@@ -4,12 +4,25 @@ class MockData {
     static var categories: [TrackerCategory] = [
         TrackerCategory(title: "Важное", trackers: [
             Tracker(id: UUID(), title: "Сходить в магазин", color: .color1, emoji: "🏝", schedule: [.wednesday, .saturday]),
+            Tracker(id: UUID(), title: "Сделать дубликат ключа", color: .color2, emoji: "🙂", schedule: [.monday, .saturday, .wednesday, .friday, .sunday, .thursday,.tuesday]),
+            Tracker(id: UUID(), title: "Сходить в магазин", color: .color1, emoji: "🏝", schedule: [.wednesday, .saturday]),
+            Tracker(id: UUID(), title: "Сделать дубликат ключа", color: .color2, emoji: "🙂", schedule: [.monday, .saturday, .wednesday, .friday, .sunday, .thursday,.tuesday]),
+            Tracker(id: UUID(), title: "Сходить в магазин", color: .color1, emoji: "🏝", schedule: [.wednesday, .saturday]),
+            Tracker(id: UUID(), title: "Сделать дубликат ключа", color: .color2, emoji: "🙂", schedule: [.monday, .saturday, .wednesday, .friday, .sunday, .thursday,.tuesday]),
+            Tracker(id: UUID(), title: "Сходить в магазин", color: .color1, emoji: "🏝", schedule: [.wednesday, .saturday]),
+            Tracker(id: UUID(), title: "Сделать дубликат ключа", color: .color2, emoji: "🙂", schedule: [.monday, .saturday, .wednesday, .friday, .sunday, .thursday,.tuesday]),
+            Tracker(id: UUID(), title: "Сходить в магазин", color: .color1, emoji: "🏝", schedule: [.wednesday, .saturday]),
+            Tracker(id: UUID(), title: "Сделать дубликат ключа", color: .color2, emoji: "🙂", schedule: [.monday, .saturday, .wednesday, .friday, .sunday, .thursday,.tuesday]),
+            Tracker(id: UUID(), title: "Сходить в магазин", color: .color1, emoji: "🏝", schedule: [.wednesday, .saturday]),
+            Tracker(id: UUID(), title: "Сделать дубликат ключа", color: .color2, emoji: "🙂", schedule: [.monday, .saturday, .wednesday, .friday, .sunday, .thursday,.tuesday]),
+            Tracker(id: UUID(), title: "Сходить в магазин", color: .color1, emoji: "🏝", schedule: [.wednesday, .saturday]),
             Tracker(id: UUID(), title: "Сделать дубликат ключа", color: .color2, emoji: "🙂", schedule: [.monday, .saturday, .wednesday, .friday, .sunday, .thursday,.tuesday])
         ])]
 }
 
-final class TrackersViewController: UIViewController, UITextFieldDelegate, ChooseTypeOfTrackerControllerProtocol {
-    
+final class TrackersViewController: UIViewController, UITextFieldDelegate, ChooseTypeOfTrackerControllerProtocol, TrackerCategoryStoreDelegate {
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
     private var categories: [TrackerCategory] = [] //MockData.categories
     private var trackers: [Tracker] = []
     private var completedTrackers: [TrackerRecord] = []
@@ -106,21 +119,8 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         searchText = searchTrackerField.text ?? ""
         plugImage.image = searchText.isEmpty ? UIImage(named: "plug_image") : UIImage(named: "error")
         plugLabel.text = searchText.isEmpty ? "Что будем отслеживать?" : "Ничего не найдено"
+        visibleCategories = trackerCategoryStore.predicateFetch(title: searchText)
         updateCategories()
-    }
-    
-    func createTracker(_ tracker: Tracker, categoryTitle: String) {
-        let newTracker = TrackerCategory(title: categoryTitle, trackers: [tracker])
-        if let index = categories.firstIndex(where: { $0.title == categoryTitle }) {
-            let array = categories[index].trackers + newTracker.trackers
-            let trackerCategory = TrackerCategory(title: categoryTitle, trackers: array)
-            categories[index] = trackerCategory
-        } else {
-            categories.append(newTracker)
-        }
-        visibleCategories = categories
-        updateVisibleCategories(visibleCategories)
-        trackersCollectionView.reloadData()
     }
     
     private func updateVisibleCategories(_ newCategory: [TrackerCategory]) {
@@ -139,7 +139,8 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     
     private func updateCategories() {
         var newCategories: [TrackerCategory] = []
-        for category in categories {
+        visibleCategories = trackerCategoryStore.trackerCategories
+        for category in visibleCategories {
             var newTrackers: [Tracker] = []
             for tracker in category.trackers {
                 guard let schedule = tracker.schedule else { return }
@@ -185,12 +186,38 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         ])
     }
     
+    func createTracker(_ tracker: Tracker, categoryTitle: String) {
+        var categoryToUpdate: TrackerCategory?
+        let categories: [TrackerCategory] = trackerCategoryStore.trackerCategories
+        for i in 0..<categories.count {
+            if categories[i].title == categoryTitle {
+                categoryToUpdate = categories[i]
+            }
+        }
+        if categoryToUpdate != nil {
+            try? trackerCategoryStore.addTracker(tracker, to: categoryToUpdate!)
+        } else {
+            let newCategory = TrackerCategory(title: categoryTitle, trackers: [tracker])
+            categoryToUpdate = newCategory
+            try? trackerCategoryStore.addNewTrackerCategory(categoryToUpdate!)
+        }
+        updateCategories()
+    }
+    
+    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
+        visibleCategories = trackerCategoryStore.trackerCategories
+        trackersCollectionView.reloadData()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         addView()
         applyConstraints()
         setNavBar()
-        updateVisibleCategories(visibleCategories)
+        setDayOfWeek()
+        updateCategories()
+        completedTrackers = try! self.trackerRecordStore.fetchTrackerRecord()
+        trackerCategoryStore.delegate = self
     }
 }
 
@@ -201,8 +228,10 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
             record.date.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
         }) {
             completedTrackers.remove(at: index)
+            try? trackerRecordStore.deleteTrackerRecord(TrackerRecord(trackerId: id, date: datePicker.date))
         } else {
             completedTrackers.append(TrackerRecord(trackerId: id, date: datePicker.date))
+            try? trackerRecordStore.addNewTrackerRecord(TrackerRecord(trackerId: id, date: datePicker.date))
         }
         trackersCollectionView.reloadData()
     }
