@@ -7,10 +7,10 @@ struct TrackerCategoryStoreUpdate {
         let newIndex: Int
     }
     
-    let insertedIndexes: IndexSet
-    let deletedIndexes: IndexSet
-    let updatedIndexes: IndexSet
-    let movedIndexes: Set<Move>
+    let insertedIndexes = [IndexSet]()
+    let deletedIndexes = [IndexSet]()
+    let updatedIndexes = [IndexSet]()
+    let movedIndexes = [IndexSet]()
 }
 
 protocol TrackerCategoryStoreDelegate: AnyObject {
@@ -29,7 +29,7 @@ final class TrackerCategoryStore: NSObject {
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
-    private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>?
+    private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>? 
     weak var delegate: TrackerCategoryStoreDelegate?
     static let shared = TrackerCategoryStore()
     
@@ -167,12 +167,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     {
         delegate?.store(
             self,
-            didUpdate: TrackerCategoryStoreUpdate(
-                insertedIndexes: [],
-                deletedIndexes: [],
-                updatedIndexes: [],
-                movedIndexes: []
-            )
+            didUpdate: TrackerCategoryStoreUpdate()
         )
         insertedIndexes = nil
         deletedIndexes = nil

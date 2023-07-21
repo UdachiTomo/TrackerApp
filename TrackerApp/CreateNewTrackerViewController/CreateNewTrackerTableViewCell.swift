@@ -19,39 +19,30 @@ final class CreateNewTrackerTableViewCell: UITableViewCell {
         return secondLabel
     } ()
     
-    private lazy var labelStack: UIStackView = {
-        let labelStack = UIStackView()
-        labelStack.alignment = .fill
-        labelStack.axis = .vertical
-        labelStack.distribution = .fillEqually
-        labelStack.spacing = 5
-        return labelStack
-    } ()
-    
-    private func setupButtonStack() {
-        labelStack.addArrangedSubview(firstLabel)
-        labelStack.addArrangedSubview(secondLabel)
-    }
-    
     private func setupTableView() {
-        addSubview(labelStack)
+        addSubview(firstLabel)
+        addSubview(secondLabel)
         backgroundColor = .ypLightGray
     }
     
     private func addView() {
-        [labelStack].forEach(setupView(_:))
+        [ firstLabel, secondLabel].forEach(setupView(_:))
     }
     
     private func applyConstraints() {
-        if ((secondLabel.text?.isEmpty) == nil) {
+        if secondLabel.text?.isEmpty == true {
             NSLayoutConstraint.activate([
-                labelStack.topAnchor.constraint(equalTo: topAnchor, constant: 26),
-                labelStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
+                firstLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
+                firstLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                secondLabel.topAnchor.constraint(equalTo: firstLabel.bottomAnchor, constant: -2),
+                secondLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
             ])
-        } else if ((secondLabel.text?.isEmpty) != nil) {
+        } else if secondLabel.text?.isEmpty != false {
             NSLayoutConstraint.activate([
-                labelStack.centerXAnchor.constraint(equalTo: centerXAnchor),
-                labelStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
+                firstLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 25),
+                firstLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                secondLabel.topAnchor.constraint(equalTo: firstLabel.bottomAnchor, constant: -2),
+                secondLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
             ])
         }
     }
@@ -60,7 +51,6 @@ final class CreateNewTrackerTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: CreateNewTrackerTableViewCell.identifier)
         addView()
         applyConstraints()
-        setupButtonStack()
         setupTableView()
     }
     

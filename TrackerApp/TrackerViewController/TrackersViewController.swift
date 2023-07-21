@@ -189,11 +189,8 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     func createTracker(_ tracker: Tracker, categoryTitle: String) {
         var categoryToUpdate: TrackerCategory?
         let categories: [TrackerCategory] = trackerCategoryStore.trackerCategories
-        for i in 0..<categories.count {
-            if categories[i].title == categoryTitle {
-                categoryToUpdate = categories[i]
-            }
-        }
+        categoryToUpdate = categories.first { $0.title == categoryTitle}
+    
         if categoryToUpdate != nil {
             try? trackerCategoryStore.addTracker(tracker, to: categoryToUpdate!)
         } else {
@@ -216,7 +213,11 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         setNavBar()
         setDayOfWeek()
         updateCategories()
-        completedTrackers = try! self.trackerRecordStore.fetchTrackerRecord()
+        do {
+            completedTrackers = try self.trackerRecordStore.fetchTrackerRecord()
+        } catch {
+            fatalError("")
+        }
         trackerCategoryStore.delegate = self
     }
 }
