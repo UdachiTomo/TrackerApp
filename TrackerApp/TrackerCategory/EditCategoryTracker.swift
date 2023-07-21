@@ -3,6 +3,7 @@ import UIKit
 class EditCategoryTracker: UIViewController {
     
     var editableCategory: TrackerCategory?
+    private let trackerCategoryStore = TrackerCategoryStore()
     
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
@@ -18,7 +19,6 @@ class EditCategoryTracker: UIViewController {
         titleTrackerTextField.backgroundColor = .backgroundColor
         titleTrackerTextField.layer.cornerRadius = 16
         titleTrackerTextField.font = .systemFont(ofSize: 17)
-        titleTrackerTextField.translatesAutoresizingMaskIntoConstraints = false
         titleTrackerTextField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         titleTrackerTextField.leftViewMode = .always
         titleTrackerTextField.text = editableCategory?.title
@@ -37,9 +37,7 @@ class EditCategoryTracker: UIViewController {
         editCategoryButton.addTarget(self, action: #selector(editCategoryButtonAction), for: .touchUpInside)
         return editCategoryButton
     }()
-    
-    private let trackerCategoryStore = TrackerCategoryStore()
-    
+
     @objc func textFieldChanged() {
         if titleTrackerTextField.text != "" {
             editCategoryButton.backgroundColor = .ypBlack

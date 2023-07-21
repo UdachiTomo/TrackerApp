@@ -6,7 +6,7 @@ protocol CreateNewTrackerCategoryDelegate: AnyObject {
 
 final class CreateNewTrackerCategory: UIViewController {
     
-    public weak var delegate: CreateNewTrackerCategoryDelegate?
+    var delegate: CreateNewTrackerCategoryDelegate?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -58,6 +58,7 @@ final class CreateNewTrackerCategory: UIViewController {
             let category = TrackerCategory(title: categoryTitle, trackers: [])
             try? trackerCategoryStore.addNewTrackerCategory(category)
             delegate?.createCategory(category)
+            
             dismiss(animated: true)
         }
     }
@@ -77,7 +78,6 @@ final class CreateNewTrackerCategory: UIViewController {
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),
-            
             categoryTitleTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
             categoryTitleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             categoryTitleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),

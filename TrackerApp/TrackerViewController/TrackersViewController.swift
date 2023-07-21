@@ -196,7 +196,11 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         setNavBar()
         setDayOfWeek()
         updateCategories()
-        completedTrackers = try! self.trackerRecordStore.fetchTrackerRecord()
+        do {
+            completedTrackers = try self.trackerRecordStore.fetchTrackerRecord()
+        } catch {
+            fatalError("")
+        }
         trackerCategoryStore.delegate = self
     }
 }
@@ -296,13 +300,19 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView,viewForSupplementaryElementOfKind kind: String,at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionHeader {
-            guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TrackersSupplementaryView.identifier, for: indexPath) as? TrackersSupplementaryView else { return UICollectionReusableView() }
-            view.titleLabel.text = visibleCategories[indexPath.section].title
-            return view
+        var id: String
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            id = "header"
+        case UICollectionView.elementKindSectionFooter:
+            id = "footer"
+        default:
+            id = ""
         }
-        return UICollectionReusableView()
         
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackersSupplementaryView else { return UICollectionReusableView() }
+        view.titleLabel.text = visibleCategories[indexPath.section].title
+        return view
     }
     
     func collectionView(

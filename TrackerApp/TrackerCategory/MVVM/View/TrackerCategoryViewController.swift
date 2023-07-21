@@ -84,7 +84,7 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         viewModel.selectCategory(with: category.title)
     }
     
-    private func actionAlert(categoryToDelete: TrackerCategory) {
+    private func actionSheet(categoryToDelete: TrackerCategory) {
         let alert = UIAlertController(title: "Эта категория точно не нужна?",
                                       message: nil,
                                       preferredStyle: .actionSheet)
@@ -108,9 +108,17 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
             self?.present(vc, animated: true)
         }
         let delete = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] action in
-            self?.actionAlert(categoryToDelete: category)
+            self?.actionSheet(categoryToDelete: category)
         }
         return UIMenu(children: [rename, delete])
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   contextMenuConfigurationForRowAt indexPath: IndexPath,
+                   point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: {suggestedActions in
+            return self.contexMenu(indexPath)
+        })
     }
     
     init(delegate: CategoriesViewModelDelegate?, selectedCategory: TrackerCategory?) {
@@ -135,7 +143,10 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let count = viewModel.categories.count
         tableView.isHidden = count == 0
-      
+        if count != 0 {
+            placeholderLabel.isHidden = true
+            placeholderImage.isHidden = true
+        }
         return count
     }
     
@@ -159,31 +170,18 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
         cell.selectionStyle = .none
         cell.label.text = viewModel.categories[indexPath.row].title
         return cell
+       
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedIndexes = indexPath
-        tableView.deselectRow(at: indexPath, animated: true)
-        let category = viewModel.categories[indexPath.row].title
+        guard let cell = tableView.cellForRow(at: indexPath) as? TrackerCategoryTableViewCell else { return }
+        guard let category = cell.label.text else { return }
         viewModel.selectCategory(with: category)
-        tableView.reloadData()
         dismiss(animated: true)
     }
     
    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         selectedIndexes = nil
-        tableView.reloadData()
     }
-    
-    func tableView(_ tableView: UITableView,
-                   contextMenuConfigurationForRowAt indexPath: IndexPath,
-                   point: CGPoint) -> UIContextMenuConfiguration? {
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
-            tableView.reloadData()
-            return self.contexMenu(indexPath)
-            
-        })
-    }
-    
 }
     

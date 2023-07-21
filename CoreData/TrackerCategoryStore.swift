@@ -7,10 +7,10 @@ struct TrackerCategoryStoreUpdate {
         let newIndex: Int
     }
     
-    let insertedIndexes: IndexSet
-    let deletedIndexes: IndexSet
-    let updatedIndexes: IndexSet
-    let movedIndexes: Set<Move>
+    let insertedIndexes = [IndexSet]()
+    let deletedIndexes = [IndexSet]()
+    let updatedIndexes = [IndexSet]()
+    let movedIndexes = Set<Move>()
 }
 
 protocol TrackerCategoryStoreDelegate: AnyObject {
@@ -175,12 +175,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     {
         delegate?.store(
             self,
-            didUpdate: TrackerCategoryStoreUpdate(
-                insertedIndexes: [],
-                deletedIndexes: [],
-                updatedIndexes: [],
-                movedIndexes: []
-            )
+            didUpdate: TrackerCategoryStoreUpdate()
         )
         insertedIndexes = nil
         deletedIndexes = nil

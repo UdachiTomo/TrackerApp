@@ -354,24 +354,24 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
 
 extension CreateNewTrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCollectionViewCell
+        guard let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCollectionViewCell else { return }
         if indexPath.section == 0 {
             if selectedEmojiCell != nil {
-                collectionView.deselectItem(at: selectedEmojiCell!, animated: true)
-                collectionView.cellForItem(at: selectedEmojiCell!)?.backgroundColor = .white
+                collectionView.deselectItem(at: selectedEmojiCell ?? [0], animated: true)
+                collectionView.cellForItem(at: selectedEmojiCell ?? [0])?.backgroundColor = .white
             }
-            cell?.backgroundColor = .ypLightGray
-            selectedEmoji = cell?.emojiLabel.text ?? ""
+            cell.backgroundColor = .ypLightGray
+            selectedEmoji = cell.emojiLabel.text ?? ""
             selectedEmojiCell = indexPath
         } else if indexPath.section == 1 {
             if selectedColorCell != nil {
-                collectionView.deselectItem(at: selectedColorCell!, animated: true)
-                collectionView.cellForItem(at: selectedColorCell!)?.layer.borderWidth = 0
+                collectionView.deselectItem(at: selectedColorCell ?? [0], animated: true)
+                collectionView.cellForItem(at: selectedColorCell ?? [0])?.layer.borderWidth = 0
             }
-            cell?.layer.borderWidth = 3
-            cell?.layer.cornerRadius = 8
-            cell?.layer.borderColor = UIColor.ypLightGray.cgColor
-            selectedColor = cell?.colorView.backgroundColor ?? nil
+            cell.layer.borderWidth = 3
+            cell.layer.cornerRadius = 8
+            cell.layer.borderColor = UIColor.ypLightGray.cgColor
+            selectedColor = cell.colorView.backgroundColor ?? nil
             selectedColorCell = indexPath
         }
     }
