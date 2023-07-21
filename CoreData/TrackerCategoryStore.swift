@@ -9,8 +9,8 @@ struct TrackerCategoryStoreUpdate {
     
     let insertedIndexes = [IndexSet]()
     let deletedIndexes = [IndexSet]()
-    let updatedIndexes = [IndexSet]()
-    let movedIndexes = [IndexSet]()
+    let updatedIndexes = IndexSet()
+    let movedIndexes = Set<Move>()
 }
 
 protocol TrackerCategoryStoreDelegate: AnyObject {
@@ -29,7 +29,7 @@ final class TrackerCategoryStore: NSObject {
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
-    private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>? 
+    private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>?
     weak var delegate: TrackerCategoryStoreDelegate?
     static let shared = TrackerCategoryStore()
     
@@ -135,6 +135,14 @@ final class TrackerCategoryStore: NSObject {
             title: title,
             trackers: trackers
         )
+    }
+    
+    func updateCategoryTitle(_ newCategoryTitle: String, _ editableCategory: TrackerCategory) throws {
+        let category = fetchedResultsController?.fetchedObjects?.first {
+            $0.titleCategory == editableCategory.title
+        }
+        category?.titleCategory = newCategoryTitle
+        try context.save()
     }
     
     func predicateFetch(title: String) -> [TrackerCategory] {
