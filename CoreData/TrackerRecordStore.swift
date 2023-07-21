@@ -37,8 +37,8 @@ class TrackerRecordStore {
     }
     
     func trackerRecord(from data: TrackerRecordCoreData) throws -> TrackerRecord {
-        guard let id = data.id else { throw MainCoreDataEror.Error }
-        guard let date = data.date else { throw MainCoreDataEror.Error }
+        guard let id = data.id else { throw MainCoreDataError.error }
+        guard let date = data.date else { throw MainCoreDataError.error }
         return TrackerRecord(
             trackerId: id,
             date: date

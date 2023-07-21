@@ -1,10 +1,7 @@
 import Foundation
 
 enum WeekDay: Int, CaseIterable {
-//    static func < (lhs: WeekDay, rhs: WeekDay) -> Bool {
-//        lhs.rawValue < rhs.rawValue
-//    }
-    
+
     case monday = 2
     case tuesday = 3
     case wednesday = 4

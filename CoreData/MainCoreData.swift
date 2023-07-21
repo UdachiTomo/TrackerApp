@@ -1,8 +1,8 @@
 import Foundation
 import CoreData
 
-enum MainCoreDataEror: Error {
-    case Error
+enum MainCoreDataError: Error {
+    case error
 }
 
 final class MainCoreData {
@@ -21,7 +21,6 @@ final class MainCoreData {
         let container = NSPersistentContainer(name: modelName)
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                print(error)
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })

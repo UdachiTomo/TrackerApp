@@ -25,7 +25,7 @@ final class TrackerCategoryStore: NSObject {
     
     private let trackerStore = TrackerStore()
     private let context: NSManagedObjectContext
-    private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>!
+    private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>?
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
@@ -35,7 +35,7 @@ final class TrackerCategoryStore: NSObject {
     
     var trackerCategories: [TrackerCategory] {
         guard
-            let objects = self.fetchedResultsController.fetchedObjects,
+            let objects = self.fetchedResultsController?.fetchedObjects,
             let trackerCategories = try? objects.map({ try self.trackerCategory(from: $0)})
         else { return [] }
         return trackerCategories
@@ -43,7 +43,12 @@ final class TrackerCategoryStore: NSObject {
     
     convenience override init() {
         let context = MainCoreData.shared.context
-        try! self.init(context: context)
+        do {
+            try self.init(context: context)
+        } catch {
+            fatalError("Initialiser is hidden!")
+        }
+        
     }
     
     init(context: NSManagedObjectContext) throws {
@@ -66,7 +71,7 @@ final class TrackerCategoryStore: NSObject {
         updateExistingTrackerCategory(trackerCategoryCoreData, with: trackerCategory)
         try context.save()
     }
-
+    
     func deleteCategory(_ categoryToDelete: TrackerCategory) throws {
         let category = fetchedResultsController?.fetchedObjects?.first {
             $0.titleCategory == categoryToDelete.title
@@ -76,7 +81,7 @@ final class TrackerCategoryStore: NSObject {
             try context.save()
         }
     }
-   
+    
     func updateExistingTrackerCategory(
         _ trackerCategoryCoreData: TrackerCategoryCoreData,
         with category: TrackerCategory)
@@ -94,7 +99,7 @@ final class TrackerCategoryStore: NSObject {
     }
     
     func addTracker(_ tracker: Tracker, to trackerCategory: TrackerCategory) throws {
-        let category = fetchedResultsController.fetchedObjects?.first {
+        let category = fetchedResultsController?.fetchedObjects?.first {
             $0.titleCategory == trackerCategory.title
         }
         let trackerCoreData = TrackerCoreData(context: context)
@@ -163,10 +168,10 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         delegate?.store(
             self,
             didUpdate: TrackerCategoryStoreUpdate(
-                insertedIndexes: insertedIndexes!,
-                deletedIndexes: deletedIndexes!,
-                updatedIndexes: updatedIndexes!,
-                movedIndexes: movedIndexes!
+                insertedIndexes: [],
+                deletedIndexes: [],
+                updatedIndexes: [],
+                movedIndexes: []
             )
         )
         insertedIndexes = nil

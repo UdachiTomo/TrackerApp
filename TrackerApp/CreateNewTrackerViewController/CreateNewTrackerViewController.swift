@@ -11,15 +11,29 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     private var eventButtons: [String] {
         return typeOfEvent.caseOfButton
     }
+    private var charactersOfTitle = 0
+    private var limitOfCharacters = 38
     private var categoryTitle: String = ""
     private var scheduleTitle: String = ""
-    private var schedule: [WeekDay] = []
+    private var schedule: [WeekDay] = [] {
+        didSet {
+            updateCreateEventButton()
+        }
+    }
     private var color: [UIColor] = [.color1, .color2, .color3, .color4, .color5, .color6, .color7, .color8, .color9, .color10, .color11, .color12, .color13, .color14, .color15, .color16, .color17, .color18]
     private var emoji: [String] = ["🙂", "😻", "🌺", "🐶", "♥️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
     private var selectedEmojiCell: IndexPath? = nil
     private var selectedColorCell: IndexPath? = nil
-    private var selectedColor: UIColor? = nil
-    private var selectedEmoji: String = "" 
+    private var selectedColor: UIColor? = nil {
+        didSet {
+            updateCreateEventButton()
+        }
+    }
+    private var selectedEmoji: String = "" {
+        didSet {
+            updateCreateEventButton()
+        }
+    }
     private var collectionViewHeader = ["Emoji", "Цвет"]
     enum TypeOfEvent {
         case regular
@@ -58,7 +72,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         titleTrackerTextField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         titleTrackerTextField.leftViewMode = .always
         titleTrackerTextField.layer.cornerRadius = 16
-        titleTrackerTextField.addTarget(self, action: #selector(method), for: .editingChanged)
+        titleTrackerTextField.addTarget(self, action: #selector(createTitleTracker), for: .editingChanged)
         return titleTrackerTextField
     } ()
     
@@ -68,6 +82,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         addTrackerButton.setTitleColor(.white, for: .normal)
         addTrackerButton.layer.cornerRadius = 16
         addTrackerButton.backgroundColor = .ypGray
+        addTrackerButton.isEnabled = false
         addTrackerButton.addTarget(self, action: #selector(didTapAddTrackerButton), for: .touchUpInside)
         return addTrackerButton
     } ()
@@ -102,12 +117,21 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         return buttonStack
     } ()
     
+    private lazy var errorLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .ypRed
+        label.font = .systemFont(ofSize: 17)
+        label.textAlignment = .justified
+        return label
+    }()
+    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.register(EmojiAndColorCollectionViewCell.self, forCellWithReuseIdentifier: EmojiAndColorCollectionViewCell.identifier)
         collectionView.register(EmojiAndColorSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EmojiAndColorSupplementaryView.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.allowsMultipleSelection = true
         return collectionView
     } ()
     
@@ -118,7 +142,14 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     
     
     @objc func createTitleTracker() {
-        
+        updateCreateEventButton()
+        guard let text = titleTrackerTextField.text?.count else { return }
+        charactersOfTitle = text
+        if charactersOfTitle < limitOfCharacters {
+            errorLabel.text = ""
+        } else {
+            errorLabel.text = "Ограничение 38 символов"
+        }
     }
     
     @objc func didTapAddTrackerButton() {
@@ -147,7 +178,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     }
    
     private func addView() {
-        [headerLabel, tableView, titleTrackerTextField, buttonStack, collectionView].forEach(view.setupView(_:))
+        [headerLabel, tableView, titleTrackerTextField, buttonStack, errorLabel, collectionView].forEach(view.setupView(_:))
     }
     
     private func applyConstraints() {
@@ -160,9 +191,11 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
                 titleTrackerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
                 titleTrackerTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
                 titleTrackerTextField.heightAnchor.constraint(equalToConstant: 75 ),
+                errorLabel.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 8),
+                errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
                 tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
                 tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                tableView.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 38),
+                tableView.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 38),
                 tableView.heightAnchor.constraint(equalToConstant: 150),
                 buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
                 buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -181,6 +214,8 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
                 titleTrackerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
                 titleTrackerTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
                 titleTrackerTextField.heightAnchor.constraint(equalToConstant: 75 ),
+                errorLabel.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 8),
+                errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
                 tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
                 tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
                 tableView.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 38),
@@ -252,7 +287,6 @@ extension CreateNewTrackerViewController: UITableViewDelegate, UITableViewDataSo
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let count = eventButtons.count
         tableView.isHidden = count == 0
-        print(count)
         return count
     }
     
@@ -306,9 +340,8 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
 
 extension CreateNewTrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = indexPath.section
         let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCollectionViewCell
-        if section == 0 {
+        if indexPath.section == 0 {
             if selectedEmojiCell != nil {
                 collectionView.deselectItem(at: selectedEmojiCell!, animated: true)
                 collectionView.cellForItem(at: selectedEmojiCell!)?.backgroundColor = .white
@@ -316,7 +349,7 @@ extension CreateNewTrackerViewController: UICollectionViewDelegate {
             cell?.backgroundColor = .ypLightGray
             selectedEmoji = cell?.emojiLabel.text ?? ""
             selectedEmojiCell = indexPath
-        } else if section == 1 {
+        } else if indexPath.section == 1 {
             if selectedColorCell != nil {
                 collectionView.deselectItem(at: selectedColorCell!, animated: true)
                 collectionView.cellForItem(at: selectedColorCell!)?.layer.borderWidth = 0
