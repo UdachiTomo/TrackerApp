@@ -4,16 +4,33 @@ protocol CreateNewTrackerViewControllerProtocol: AnyObject {
         func createTracker(_ tracker: Tracker, categoryTitle: String)
 }
 
-final class CreateNewTrackerViewController: UIViewController, TrackerScheduleViewControllerDelegate, TrackerCategoryViewControllerProtocol {
+final class CreateNewTrackerViewController: UIViewController, TrackerScheduleViewControllerDelegate , CategoriesViewModelDelegate {
+    
+    func createCategory(category: TrackerCategory) {
+                self.category = category
+                let categoryString = category.title
+                categoryTitle = categoryString
+                tableView.reloadData()
+                updateCreateEventButton()
+        }
+    
     public weak var delegate: CreateNewTrackerViewControllerProtocol?
-    private var trackerService = TrackerService.shared
     private var typeOfEvent: TypeOfEvent
     private var eventButtons: [String] {
         return typeOfEvent.caseOfButton
     }
     private var charactersOfTitle = 0
     private var limitOfCharacters = 38
-    private var categoryTitle: String = ""
+    private var category: TrackerCategory? = nil {
+        didSet {
+            updateCreateEventButton()
+        }
+    }
+    private var categoryTitle: String = "" {
+        didSet {
+            updateCreateEventButton()
+        }
+    }
     private var scheduleTitle: String = ""
     private var schedule: [WeekDay] = [] {
         didSet {
@@ -166,8 +183,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     }
     
     private func didTapCategoryButton() {
-        let viewController = TrackerCategoryViewController()
-        viewController.delegate = self
+        let viewController = TrackerCategoryViewController(delegate: self, selectedCategory: category)
         present(viewController, animated: true)
     }
     
@@ -297,13 +313,11 @@ extension CreateNewTrackerViewController: UITableViewDelegate, UITableViewDataSo
         cell.firstLabel.text = eventButtons[indexPath.row]
         if indexPath.row == 0 {
             cell.secondLabel.text = categoryTitle
-            
         }
         if indexPath.row == 1 {
             cell.secondLabel.text = scheduleTitle
             cell.separatorInset =  UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
         }
-        
         cell.accessoryType = .disclosureIndicator
         
         return cell

@@ -1,14 +1,9 @@
 import UIKit
 
-protocol TrackerCategoryViewControllerProtocol: AnyObject {
-    func addCategoryInTracker(category: String?)
-}
-
-final class TrackerCategoryViewController: UIViewController {
-    var trackerService: TrackerService?
-    weak var delegate: TrackerCategoryViewControllerProtocol?
+final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCategoryDelegate {
+    
     private var selectedIndexes: IndexPath?
-    private var mockCategory = ["Важное", "Питомец"]
+    private let viewModel: CategoriesViewModel
     private lazy var headerLabel: UILabel = {
         let headerLabel = UILabel()
         headerLabel.text = "Категория"
@@ -21,22 +16,27 @@ final class TrackerCategoryViewController: UIViewController {
         tableView.register(TrackerCategoryTableViewCell.self, forCellReuseIdentifier: TrackerCategoryTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.layer.cornerRadius = 8
+        tableView.layer.cornerRadius = 16
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        
+        tableView.allowsMultipleSelection = false
         return tableView
     } ()
     
     private lazy var placeholderLabel: UILabel = {
        let placeholderLabel = UILabel()
-        placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
         placeholderLabel.text = "Привычки и события можно nобъединить по смыслу"
         placeholderLabel.tintColor = .black
-        placeholderLabel.numberOfLines = 0
+        placeholderLabel.numberOfLines = 2
         placeholderLabel.textAlignment = .center
         placeholderLabel.font = .systemFont(ofSize: 12, weight: .medium)
         return placeholderLabel
     }()
+    
+    private lazy var placeholderImage: UIImageView = {
+        let placeholderImage = UIImageView()
+        placeholderImage.image = UIImage(named: "plug_image")
+        return placeholderImage
+    } ()
     
     private lazy var addCategoryButton: UIButton = {
         let addCategoryButton = UIButton()
@@ -48,11 +48,13 @@ final class TrackerCategoryViewController: UIViewController {
     } ()
     
     @objc private func didTapAddCategoryButton() {
-        dismiss(animated: true)
+        let vc = CreateNewTrackerCategory()
+        vc.delegate = self
+        present(vc, animated: true)
     }
     
     private func addView() {
-        [headerLabel, tableView, addCategoryButton, placeholderLabel].forEach(view.setupView(_:))
+        [headerLabel, tableView, addCategoryButton, placeholderLabel, placeholderImage].forEach(view.setupView(_:))
     }
     
     private func applyConstraints () {
@@ -68,8 +70,57 @@ final class TrackerCategoryViewController: UIViewController {
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.heightAnchor.constraint(equalToConstant: 60),
             placeholderLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            placeholderLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 342)
+            placeholderLabel.topAnchor.constraint(equalTo: placeholderImage.bottomAnchor, constant: 8),
+            placeholderLabel.widthAnchor.constraint(equalToConstant: 200),
+            placeholderImage.widthAnchor.constraint(equalToConstant: 80),
+            placeholderImage.heightAnchor.constraint(equalToConstant: 80),
+            placeholderImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            placeholderImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
+    }
+    
+    func createCategory(_ category: TrackerCategory) {
+        viewModel.selectCategory(category)
+        viewModel.selectCategory(with: category.title)
+    }
+    
+    private func actionAlert(categoryToDelete: TrackerCategory) {
+        let alert = UIAlertController(title: "Эта категория точно не нужна?",
+                                      message: nil,
+                                      preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Удалить",
+                                      style: .destructive) { [weak self] _ in
+            self?.viewModel.deleteCategory(categoryToDelete)
+        })
+        alert.addAction(UIAlertAction(title: "Отменить",
+                                      style: .cancel) { _ in
+            
+        })
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func contexMenu(_ indexPath: IndexPath) -> UIMenu {
+        let category = viewModel.categories[indexPath.row]
+        let rename = UIAction(title: "Редактировать", image: nil) { [weak self] action in
+            let vc = EditCategoryTracker()
+            vc.editableCategory = category
+            self?.present(vc, animated: true)
+        }
+        let delete = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] action in
+            self?.actionAlert(categoryToDelete: category)
+        }
+        return UIMenu(children: [rename, delete])
+    }
+    
+    init(delegate: CategoriesViewModelDelegate?, selectedCategory: TrackerCategory?) {
+        viewModel = CategoriesViewModel(delegate: delegate, selectedCategory: selectedCategory)
+        super.init(nibName: nil, bundle: nil)
+        viewModel.onChange = self.tableView.reloadData
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -82,11 +133,10 @@ final class TrackerCategoryViewController: UIViewController {
 
 extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if mockCategory.isEmpty {
-            return 0
-        } else {
-            return mockCategory.count
-        }
+        let count = viewModel.categories.count
+        tableView.isHidden = count == 0
+      
+        return count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -107,17 +157,17 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
             cell.accessoryType = .none
         }
         cell.selectionStyle = .none
-        cell.label.text = mockCategory[indexPath.row]
-    
+        cell.label.text = viewModel.categories[indexPath.row].title
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedIndexes = indexPath
         tableView.deselectRow(at: indexPath, animated: true)
-        let category = mockCategory[indexPath.row]
-        delegate?.addCategoryInTracker(category: category )
+        let category = viewModel.categories[indexPath.row].title
+        viewModel.selectCategory(with: category)
         tableView.reloadData()
+        dismiss(animated: true)
     }
     
    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -125,36 +175,15 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
         tableView.reloadData()
     }
     
+    func tableView(_ tableView: UITableView,
+                   contextMenuConfigurationForRowAt indexPath: IndexPath,
+                   point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+            tableView.reloadData()
+            return self.contexMenu(indexPath)
+            
+        })
+    }
+    
 }
-    final class TrackerCategoryTableViewCell: UITableViewCell {
-        static let identifier = "CategoryCell"
-        
-        lazy var label: UILabel = {
-            let label = UILabel()
-            label.textColor = .black
-            label.font = UIFont.systemFont(ofSize: 17)
-            return label
-        } ()
-        
-        override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-            super.init(style: style, reuseIdentifier: TrackerCategoryTableViewCell.identifier)
-            addView()
-            applyConstraints()
-            backgroundColor = .ypLightGray
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        private func addView() {
-            [label].forEach(setupView(_:))
-        }
-        
-        private func applyConstraints() {
-            NSLayoutConstraint.activate([
-                label.centerYAnchor.constraint(equalTo: centerYAnchor),
-                label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
-            ])
-        }
-}
+    

@@ -137,6 +137,14 @@ final class TrackerCategoryStore: NSObject {
         )
     }
     
+    func updateCategoryTitle(_ newCategoryTitle: String, _ editableCategory: TrackerCategory) throws {
+        let category = fetchedResultsController?.fetchedObjects?.first {
+            $0.titleCategory == editableCategory.title
+        }
+        category?.titleCategory = newCategoryTitle
+        try context.save()
+    }
+    
     func predicateFetch(title: String) -> [TrackerCategory] {
         if title.isEmpty {
             return trackerCategories

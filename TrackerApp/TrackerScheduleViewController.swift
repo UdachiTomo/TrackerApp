@@ -6,7 +6,6 @@ protocol TrackerScheduleViewControllerDelegate: AnyObject {
 }
 
 final class TrackerScheduleViewController: UIViewController, WeekDayTableViewCellDelegate {
-    var trackerService: TrackerService?
     public weak var delegate: TrackerScheduleViewControllerDelegate?
     private var schedule: [WeekDay] = []
     private lazy var headerLabel: UILabel = {

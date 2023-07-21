@@ -9,8 +9,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = TabBarController()
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
+        if UserDefaults.standard.value(forKey: "isChecked") == nil {
+            window?.rootViewController = OnboardingViewControlller.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
+        } else {
+            window?.rootViewController = tabBarController
+        }
         window?.windowScene = scene
-        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
 
