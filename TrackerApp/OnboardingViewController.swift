@@ -25,7 +25,7 @@ final class OnboardingViewControlller: UIPageViewController, UIPageViewControlle
         let startButton = UIButton()
         startButton.layer.cornerRadius = 15
         startButton.setTitle("Вот это технологии!", for: .normal)
-        startButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        startButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         startButton.accessibilityIdentifier = "startButton"
         startButton.backgroundColor = .black
         startButton.addTarget(self, action: #selector(toMainView), for: .touchUpInside)
@@ -37,7 +37,7 @@ final class OnboardingViewControlller: UIPageViewController, UIPageViewControlle
         let startButton = UIButton()
         startButton.layer.cornerRadius = 15
         startButton.setTitle("Вот это технологии!", for: .normal)
-        startButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        startButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         startButton.accessibilityIdentifier = "startButton"
         startButton.backgroundColor = .black
         startButton.addTarget(self, action: #selector(toMainView), for: .touchUpInside)
