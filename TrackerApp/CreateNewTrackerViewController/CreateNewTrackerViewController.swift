@@ -11,17 +11,18 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
                 let categoryString = category.title
                 categoryTitle = categoryString
                 tableView.reloadData()
-                updateCreateEventButton()
         }
     
     public weak var delegate: CreateNewTrackerViewControllerProtocol?
+    private let trackerStore = TrackerStore()
     private var typeOfEvent: TypeOfEvent
     private var eventButtons: [String] {
         return typeOfEvent.caseOfButton
     }
+    
     private var charactersOfTitle = 0
     private var limitOfCharacters = 38
-    private var category: TrackerCategory? = nil {
+    var category: TrackerCategory? = nil {
         didSet {
             updateCreateEventButton()
         }
@@ -52,6 +53,9 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         }
     }
     private var collectionViewHeader = ["Emoji", "Цвет"]
+    var editTracker: Tracker?
+    var editTrackerDate: Date?
+    
     enum TypeOfEvent {
         case regular
         case irregular
@@ -170,8 +174,25 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     }
     
     @objc func didTapAddTrackerButton() {
-        let tracker = Tracker(id: UUID(), title: titleTrackerTextField.text ?? "", color: selectedColor ?? .color1, emoji: selectedEmoji, schedule: schedule)
-        delegate?.createTracker(tracker, categoryTitle: categoryTitle)
+        var tracker: Tracker?
+        if editTracker == nil {
+            if typeOfEvent == .regular {
+                tracker = Tracker(id: UUID(), title: titleTrackerTextField.text ?? "", color: selectedColor ?? .color1, emoji: selectedEmoji, schedule: schedule, pinned: false)
+            } else {
+                schedule = WeekDay.allCases
+                tracker = Tracker(id: UUID(), title: titleTrackerTextField.text ?? "", color: selectedColor ?? .color1, emoji: selectedEmoji, schedule: schedule, pinned: false)
+            }
+            guard let tracker = tracker else { return }
+            delegate?.createTracker(tracker, categoryTitle: categoryTitle)
+        } else {
+            guard let editTracker = editTracker else { return }
+            try? trackerStore.updateTracker(newTitle: titleTrackerTextField.text ?? "",
+                                            newEmoji: selectedEmoji,
+                                            newColor: selectedEmoji.color.hexString,
+                                            newSchedule: schedule,
+                                            categoryTitle: category?.title ?? "Без названия",
+                                            editableTracker: editTracker)
+        }
         self.view.window?.rootViewController?.dismiss(animated: true)
     }
     

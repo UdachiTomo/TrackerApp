@@ -122,14 +122,10 @@ final class TrackerCategoryStore: NSObject {
             guard let id = trackerCoreData.id,
                   let title = trackerCoreData.title,
                   let color = trackerCoreData.color?.color,
-                  let emoji = trackerCoreData.emoji else { return nil }
-            return Tracker(
-                id: id,
-                title: title,
-                color: color,
-                emoji: emoji,
-                schedule: trackerCoreData.schedule?.compactMap { WeekDay(rawValue: $0) }
-            )
+                  let emoji = trackerCoreData.emoji
+            else { return nil }
+            let pinned = trackerCoreData.pinned
+            return Tracker(id: id, title: title, color: color, emoji: emoji, schedule: trackerCoreData.schedule?.compactMap { WeekDay(rawValue: $0) }, pinned: pinned)
         } ?? []
         return TrackerCategory(
             title: title,
@@ -143,6 +139,22 @@ final class TrackerCategoryStore: NSObject {
         }
         category?.titleCategory = newCategoryTitle
         try context.save()
+    }
+    
+    func category(_ categoryTitle: String) -> TrackerCategoryCoreData? {
+        return fetchedResultsController?.fetchedObjects?.first {
+            $0.titleCategory == categoryTitle
+        }
+    }
+    
+    func category(forTracker tracker: Tracker) -> TrackerCategory? {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(format: "ANY trackers.id == %@", tracker.id.uuidString)
+        guard let trackerCategoriesCoreData = try? context.fetch(request) else { return nil }
+        guard let categories = try? trackerCategoriesCoreData.map({ try self.trackerCategory(from: $0)})
+        else { return nil }
+        return categories.first
     }
     
     func predicateFetch(title: String) -> [TrackerCategory] {

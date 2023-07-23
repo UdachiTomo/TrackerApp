@@ -11,7 +11,7 @@ final class TrackerCategoryTableViewCell: UITableViewCell {
     } ()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: TrackerCategoryTableViewCell.identifier)
+        super.init(style: .default, reuseIdentifier: TrackerCategoryTableViewCell.identifier)
         addView()
         applyConstraints()
         backgroundColor = .ypLightGray
@@ -30,5 +30,10 @@ final class TrackerCategoryTableViewCell: UITableViewCell {
             label.centerYAnchor.constraint(equalTo: centerYAnchor),
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
         ])
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        self.accessoryType = selected ? .checkmark : .none
     }
 }

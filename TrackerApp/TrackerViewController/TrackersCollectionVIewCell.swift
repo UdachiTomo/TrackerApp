@@ -11,14 +11,17 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     private var isCompletedToday: Bool = false
     private var trackerId: UUID? = nil
     private var indexPath: IndexPath?
+    public var updateMenu: UIView {
+        return collectionView
+    }
     
-    lazy var collectionView: UIView = {
+    private lazy var collectionView: UIView = {
         let collectionView = UIView()
         collectionView.layer.cornerRadius = 16
         return collectionView
     } ()
     
-    lazy var emojiView: UIView = {
+    private lazy var emojiView: UIView = {
         let emojiView = UIView()
         emojiView.backgroundColor = .white.withAlphaComponent(0.3)
         emojiView.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
@@ -27,12 +30,12 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return emojiView
     } ()
     
-    lazy var emojiLabel: UILabel = {
+    private lazy var emojiLabel: UILabel = {
         let emojiLabel = UILabel()
         return emojiLabel
     } ()
     
-    lazy var trackerName: UILabel = {
+    private lazy var trackerName: UILabel = {
         let trackerName = UILabel()
         trackerName.font = UIFont.systemFont(ofSize: 12)
         trackerName.textAlignment = .left
@@ -42,14 +45,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return trackerName
     } ()
     
-    lazy var resultLabel: UILabel = {
+    private lazy var resultLabel: UILabel = {
         let resultLabel = UILabel()
         resultLabel.font = UIFont.systemFont(ofSize: 12)
         resultLabel.text = " 0 дней"
         return resultLabel
     } ()
     
-    lazy var checkButton: UIButton = {
+    private lazy var checkButton: UIButton = {
         let checkButton = UIButton(type: .system)
         let image = UIImage(systemName: "plus")
         checkButton.setImage(image, for: .normal)
@@ -59,13 +62,20 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return checkButton
     } ()
     
+    private lazy var pinImageView: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "pin")
+        image.isHidden = false
+        return image
+    }()
+    
     @objc private func didTapCheckButton() {
         guard let id = trackerId else { return }
         delegate?.completedTracker(id: id)
     }
     
     private func addView() {
-        [collectionView, emojiView, emojiLabel, trackerName, resultLabel, checkButton].forEach(setupView(_:))
+        [collectionView, emojiView, emojiLabel, trackerName, resultLabel, checkButton, pinImageView].forEach(setupView(_:))
     }
     
     private func applyConstraints() {
@@ -99,7 +109,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         emoji: String,
         isCompleted: Bool,
         isEnabled: Bool,
-        completedCount: Int
+        completedCount: Int,
+        pinned: Bool
     ) {
         let mod10 = completedCount % 10
         let mod100 = completedCount % 100

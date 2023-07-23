@@ -113,18 +113,11 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         return UIMenu(children: [rename, delete])
     }
     
-    func tableView(_ tableView: UITableView,
-                   contextMenuConfigurationForRowAt indexPath: IndexPath,
-                   point: CGPoint) -> UIContextMenuConfiguration? {
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: {suggestedActions in
-            return self.contexMenu(indexPath)
-        })
-    }
-    
     init(delegate: CategoriesViewModelDelegate?, selectedCategory: TrackerCategory?) {
         viewModel = CategoriesViewModel(delegate: delegate, selectedCategory: selectedCategory)
         super.init(nibName: nil, bundle: nil)
         viewModel.onChange = self.tableView.reloadData
+        tableView.reloadData()
     }
     
     required init?(coder: NSCoder) {
@@ -158,14 +151,20 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TrackerCategoryTableViewCell.identifier, for: indexPath) as? TrackerCategoryTableViewCell else {
             return UITableViewCell()
         }
+        
         if tableView.numberOfRows(inSection: indexPath.section) - 1 == indexPath.row {
                 cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
+            cell.layer.cornerRadius = 16
+            cell.clipsToBounds = true
+            cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
         }
         if let selectedIndexes = selectedIndexes, selectedIndexes == indexPath {
+            print("Я тут")
             cell.accessoryType = .checkmark
             cell.tintColor = .ypBlue
         } else {
             cell.accessoryType = .none
+            print("Я тоже тут")
         }
         cell.selectionStyle = .none
         cell.label.text = viewModel.categories[indexPath.row].title
@@ -182,6 +181,14 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
     
    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         selectedIndexes = nil
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   contextMenuConfigurationForRowAt indexPath: IndexPath,
+                   point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: {suggestedActions in
+            return self.contexMenu(indexPath)
+        })
     }
 }
     

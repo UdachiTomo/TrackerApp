@@ -58,8 +58,8 @@ final class CreateNewTrackerCategory: UIViewController {
             let category = TrackerCategory(title: categoryTitle, trackers: [])
             try? trackerCategoryStore.addNewTrackerCategory(category)
             delegate?.createCategory(category)
-            
             dismiss(animated: true)
+            
         }
     }
     
