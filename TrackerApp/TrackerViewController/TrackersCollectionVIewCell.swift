@@ -16,7 +16,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let collectionView = UIView()
         collectionView.layer.cornerRadius = 16
         return collectionView
-    } ()
+    }()
     
     lazy var emojiView: UIView = {
         let emojiView = UIView()
@@ -25,12 +25,12 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         emojiView.layer.cornerRadius = emojiView.bounds.height / 2
         emojiView.layer.masksToBounds = true
         return emojiView
-    } ()
+    }()
     
     lazy var emojiLabel: UILabel = {
         let emojiLabel = UILabel()
         return emojiLabel
-    } ()
+    }()
     
     lazy var trackerName: UILabel = {
         let trackerName = UILabel()
@@ -40,14 +40,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         trackerName.minimumScaleFactor = 0.5
         trackerName.numberOfLines = 2
         return trackerName
-    } ()
+    }()
     
     lazy var resultLabel: UILabel = {
         let resultLabel = UILabel()
         resultLabel.font = UIFont.systemFont(ofSize: 12)
         resultLabel.text = " 0 дней"
         return resultLabel
-    } ()
+    }()
     
     lazy var checkButton: UIButton = {
         let checkButton = UIButton(type: .system)
@@ -57,7 +57,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         checkButton.layer.cornerRadius = 16
         checkButton.addTarget(self, action: #selector(didTapCheckButton), for: .touchUpInside)
         return checkButton
-    } ()
+    }()
     
     @objc private func didTapCheckButton() {
         guard let id = trackerId else { return }

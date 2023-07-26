@@ -37,7 +37,7 @@ class EditCategoryTracker: UIViewController {
         editCategoryButton.addTarget(self, action: #selector(editCategoryButtonAction), for: .touchUpInside)
         return editCategoryButton
     }()
-
+    
     @objc func textFieldChanged() {
         if titleTrackerTextField.text != "" {
             editCategoryButton.backgroundColor = .ypBlack

@@ -8,8 +8,6 @@ extension ChooseTypeOfTrackerController: CreateNewTrackerViewControllerProtocol 
     func createTracker(_ tracker: Tracker, categoryTitle: String) {
         delegate?.createTracker(tracker, categoryTitle: categoryTitle)
     }
-    
-
 }
 
 final class ChooseTypeOfTrackerController: UIViewController {
@@ -21,7 +19,7 @@ final class ChooseTypeOfTrackerController: UIViewController {
         headerLabel.text = "Создание Трекера"
         headerLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return headerLabel
-    } ()
+    }()
     
     private lazy var regularButton: UIButton = {
         let regularButton = UIButton()
@@ -31,7 +29,7 @@ final class ChooseTypeOfTrackerController: UIViewController {
         regularButton.layer.cornerRadius = 16
         regularButton.addTarget(self, action: #selector(regularTapButton), for: .touchUpInside)
         return regularButton
-    } ()
+    }()
     
     private lazy var irregularButton: UIButton = {
         let irregularButton = UIButton()
@@ -41,7 +39,7 @@ final class ChooseTypeOfTrackerController: UIViewController {
         irregularButton.layer.cornerRadius = 16
         irregularButton.addTarget(self, action: #selector(irregularTapButton), for: .touchUpInside)
         return irregularButton
-    } ()
+    }()
     
     @objc private func regularTapButton() {
         let viewController = CreateNewTrackerViewController(typeOfEvent: .regular)

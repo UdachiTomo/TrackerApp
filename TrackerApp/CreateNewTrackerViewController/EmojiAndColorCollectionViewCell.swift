@@ -8,13 +8,13 @@ final class EmojiAndColorCollectionViewCell: UICollectionViewCell {
         emojiLabel.font = .systemFont(ofSize: 32)
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         return emojiLabel
-    } ()
+    }()
     
     lazy var colorView: UIView = {
         let colorView = UIView()
         colorView.translatesAutoresizingMaskIntoConstraints = false
         return colorView
-    } ()
+    }()
     
     private func applyConstraints() {
         NSLayoutConstraint.activate([
@@ -32,7 +32,7 @@ final class EmojiAndColorCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(emojiLabel)
         contentView.addSubview(colorView)
         applyConstraints()
-       
+        
     }
     
     required init?(coder: NSCoder) {
@@ -54,10 +54,7 @@ final class EmojiAndColorSupplementaryView: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         addSubview(titleLabel)
-        
-        
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 20),

@@ -20,7 +20,7 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.allowsMultipleSelection = false
         return tableView
-    } ()
+    }()
 
     private lazy var placeholderLabel: UILabel = {
        let placeholderLabel = UILabel()
@@ -36,7 +36,7 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         let placeholderImage = UIImageView()
         placeholderImage.image = UIImage(named: "plug_image")
         return placeholderImage
-    } ()
+    }()
 
     private lazy var addCategoryButton: UIButton = {
         let addCategoryButton = UIButton()
@@ -45,7 +45,7 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         addCategoryButton.layer.cornerRadius = 16
         addCategoryButton.addTarget(self, action: #selector(didTapAddCategoryButton), for: .touchUpInside)
         return addCategoryButton
-    } ()
+    }()
 
     @objc private func didTapAddCategoryButton() {
         let vc = CreateNewTrackerCategory()

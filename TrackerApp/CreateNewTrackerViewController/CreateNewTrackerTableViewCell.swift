@@ -10,14 +10,14 @@ final class CreateNewTrackerTableViewCell: UITableViewCell {
         firstLabel.textColor = .black
         firstLabel.textAlignment = .left
         return firstLabel
-    } ()
+    }()
     
     lazy var secondLabel: UILabel = {
         let secondLabel = UILabel()
         secondLabel.font = UIFont.systemFont(ofSize: 17)
         secondLabel.textColor = .gray
         return secondLabel
-    } ()
+    }()
     
     lazy var labelStack: UIStackView = {
         let labelStack = UIStackView()
@@ -26,7 +26,7 @@ final class CreateNewTrackerTableViewCell: UITableViewCell {
         labelStack.distribution = .fillEqually
         labelStack.spacing = 5
         return labelStack
-    } ()
+    }()
     
     private func setupButtonStack() {
         labelStack.addArrangedSubview(firstLabel)
@@ -43,7 +43,7 @@ final class CreateNewTrackerTableViewCell: UITableViewCell {
     private func addView() {
         [labelStack,firstLabel, secondLabel].forEach(setupView(_:))
     }
-
+    
     private func applyConstraints() {
         if secondLabel.text == nil {
             NSLayoutConstraint.activate([

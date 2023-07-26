@@ -14,7 +14,7 @@ final class TrackerScheduleViewController: UIViewController, WeekDayTableViewCel
         headerLabel.textColor = .black
         headerLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return headerLabel
-    } ()
+    }()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds)
@@ -24,7 +24,7 @@ final class TrackerScheduleViewController: UIViewController, WeekDayTableViewCel
         tableView.dataSource = self
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         return tableView
-    } ()
+    }()
     
     
     private lazy var finishButton: UIButton = {
@@ -34,7 +34,7 @@ final class TrackerScheduleViewController: UIViewController, WeekDayTableViewCel
         finishButton.layer.cornerRadius = 16
         finishButton.addTarget(self, action: #selector(didTapFinishButton), for: .touchUpInside)
         return finishButton
-    } ()
+    }()
     
     @objc private func didTapFinishButton() {
         let schedule = schedule
@@ -100,7 +100,7 @@ extension TrackerScheduleViewController: UITableViewDelegate, UITableViewDataSou
             return UITableViewCell()
         }
         if tableView.numberOfRows(inSection: indexPath.section) - 1 == indexPath.row {
-                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
         }
         let weekDay = WeekDay.allCases[indexPath.row]
         cell.delegate = self
@@ -126,7 +126,7 @@ class WeekDayTableViewCell: UITableViewCell {
         label.textColor = .black
         label.font = .systemFont(ofSize: 17)
         return label
-    } ()
+    }()
     
     lazy var switchDay: UISwitch = {
         let switchDay = UISwitch()
@@ -135,7 +135,7 @@ class WeekDayTableViewCell: UITableViewCell {
         switchDay.onTintColor = .ypBlue
         switchDay.addTarget(self, action: #selector(switchValueChange), for: .valueChanged)
         return switchDay
-    } ()
+    }()
     
     @objc private func switchValueChange(_ sender: UISwitch) {
         guard let weekDay else { return }
@@ -167,4 +167,4 @@ class WeekDayTableViewCell: UITableViewCell {
         ])
     }
 }
-    
+

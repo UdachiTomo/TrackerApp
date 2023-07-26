@@ -25,14 +25,14 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         trackerLabel.textColor = .ypBlack
         trackerLabel.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         return trackerLabel
-    } ()
+    }()
     
     private lazy var plusTrackerButton: UIButton = {
         let plustTrackerButton = UIButton()
         plustTrackerButton.setImage(UIImage(named: "plus"), for: .normal)
         plustTrackerButton.addTarget(self, action: #selector(createNewTrackers), for: .touchUpInside)
         return plustTrackerButton
-    } ()
+    }()
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -44,7 +44,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         datePicker.clipsToBounds = true
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         return datePicker
-    } ()
+    }()
     
     private lazy var searchTrackerField: UISearchTextField = {
         let searchTrackerField = UISearchTextField()
@@ -54,13 +54,13 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         searchTrackerField.delegate = self
         searchTrackerField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         return searchTrackerField
-    } ()
+    }()
     
     private lazy var plugImage: UIImageView = {
         let plugImage = UIImageView()
         plugImage.image = UIImage(named: "plug_image")
         return plugImage
-    } ()
+    }()
     
     private lazy var plugLabel: UILabel = {
         let plugLabel = UILabel()
@@ -68,7 +68,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         plugLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         plugLabel.textColor = .ypBlack
         return plugLabel
-    } ()
+    }()
     
     private lazy var trackersCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()

@@ -1,18 +1,18 @@
 import UIKit
 
 protocol CreateNewTrackerViewControllerProtocol: AnyObject {
-        func createTracker(_ tracker: Tracker, categoryTitle: String)
+    func createTracker(_ tracker: Tracker, categoryTitle: String)
 }
 
 final class CreateNewTrackerViewController: UIViewController, TrackerScheduleViewControllerDelegate , CategoriesViewModelDelegate {
     
     func createCategory(category: TrackerCategory) {
-                self.category = category
-                let categoryString = category.title
-                categoryTitle = categoryString
-                tableView.reloadData()
-                updateCreateEventButton()
-        }
+        self.category = category
+        let categoryString = category.title
+        categoryTitle = categoryString
+        tableView.reloadData()
+        updateCreateEventButton()
+    }
     
     public weak var delegate: CreateNewTrackerViewControllerProtocol?
     private var typeOfEvent: TypeOfEvent
@@ -78,7 +78,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         headerLabel.text = "Новая привычка"
         headerLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return headerLabel
-    } ()
+    }()
     
     private lazy var titleTrackerTextField: UITextField = {
         let titleTrackerTextField = UITextField()
@@ -91,7 +91,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         titleTrackerTextField.layer.cornerRadius = 16
         titleTrackerTextField.addTarget(self, action: #selector(createTitleTracker), for: .editingChanged)
         return titleTrackerTextField
-    } ()
+    }()
     
     private lazy var addTrackerButton: UIButton = {
         let addTrackerButton = UIButton()
@@ -102,7 +102,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         addTrackerButton.isEnabled = false
         addTrackerButton.addTarget(self, action: #selector(didTapAddTrackerButton), for: .touchUpInside)
         return addTrackerButton
-    } ()
+    }()
     
     private lazy var cancerTrackerButton: UIButton = {
         let cancerTrackerButton = UIButton()
@@ -113,7 +113,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         cancerTrackerButton.layer.borderColor = UIColor.red.cgColor
         cancerTrackerButton.addTarget(self, action: #selector(didTapCancelTrackerButton), for: .touchUpInside)
         return cancerTrackerButton
-    } ()
+    }()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds)
@@ -123,7 +123,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         tableView.layer.cornerRadius = 8
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 345, bottom: 0, right: 345)
         return tableView
-    } ()
+    }()
     
     private lazy var buttonStack: UIStackView = {
         let buttonStack = UIStackView()
@@ -132,7 +132,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         buttonStack.distribution = .fillEqually
         buttonStack.spacing = 8
         return buttonStack
-    } ()
+    }()
     
     private lazy var errorLabel: UILabel = {
         let label = UILabel()
@@ -150,7 +150,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         collectionView.delegate = self
         collectionView.allowsMultipleSelection = true
         return collectionView
-    } ()
+    }()
     
     private func setupButtonStack() {
         buttonStack.addArrangedSubview(cancerTrackerButton)
@@ -192,7 +192,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         viewController.delegate = self
         present(viewController, animated: true)
     }
-   
+    
     private func addView() {
         [headerLabel, tableView, titleTrackerTextField, buttonStack, errorLabel, collectionView].forEach(view.setupView(_:))
     }
@@ -273,7 +273,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
             addTrackerButton.backgroundColor = .gray
         }
     }
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
