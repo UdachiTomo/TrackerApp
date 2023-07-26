@@ -1,12 +1,13 @@
 import UIKit
 
-protocol CreateNewTrackerCategoryDelegate: AnyObject {
+protocol CreateNewTrackerCategoryDelegate {
     func createCategory(_ category: TrackerCategory)
 }
 
 final class CreateNewTrackerCategory: UIViewController {
     
     var delegate: CreateNewTrackerCategoryDelegate?
+    private let trackerCategoryStore = TrackerCategoryStore()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -41,8 +42,6 @@ final class CreateNewTrackerCategory: UIViewController {
         return button
     }()
     
-    private let trackerCategoryStore = TrackerCategoryStore()
-    
     @objc func textFieldChanged() {
         if categoryTitleTextField.text != "" {
             addCategoryButton.backgroundColor = .black
@@ -58,7 +57,6 @@ final class CreateNewTrackerCategory: UIViewController {
             let category = TrackerCategory(title: categoryTitle, trackers: [])
             try? trackerCategoryStore.addNewTrackerCategory(category)
             delegate?.createCategory(category)
-            
             dismiss(animated: true)
         }
     }
@@ -67,14 +65,14 @@ final class CreateNewTrackerCategory: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         addView()
-        setupLayout()
+        applyConstraints()
     }
     
     private func addView() {
         [titleLabel, categoryTitleTextField, addCategoryButton].forEach(view.setupView(_:))
     }
     
-    private func setupLayout() {
+    private func applyConstraints() {
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),

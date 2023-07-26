@@ -35,15 +35,11 @@ class TrackerStore {
     }
     
     func tracker(from data: TrackerCoreData) throws -> Tracker {
-        guard let title = data.title else { throw MainCoreDataError.error }
-        
-        guard let uuid = data.id else { throw MainCoreDataError.error }
-        
-        guard let emoji = data.emoji else { throw MainCoreDataError.error }
-        
-        guard let color = data.color else { throw MainCoreDataError.error }
-        
-        guard let schedule = data.schedule else { throw MainCoreDataError.error }
+        guard let title = data.title,
+                      let uuid = data.id,
+                      let emoji = data.emoji,
+                      let color = data.color,
+                      let schedule = data.schedule else { throw MainCoreDataError.error }
         
         return Tracker(id: uuid,
                        title: title,

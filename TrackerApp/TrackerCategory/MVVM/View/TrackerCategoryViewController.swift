@@ -1,7 +1,7 @@
 import UIKit
 
 final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCategoryDelegate {
-    
+
     private var selectedIndexes: IndexPath?
     private let viewModel: CategoriesViewModel
     private lazy var headerLabel: UILabel = {
@@ -10,9 +10,9 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         headerLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return headerLabel
     } ()
-    
+
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: view.bounds)
+        let tableView = UITableView()
         tableView.register(TrackerCategoryTableViewCell.self, forCellReuseIdentifier: TrackerCategoryTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
@@ -21,7 +21,7 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         tableView.allowsMultipleSelection = false
         return tableView
     } ()
-    
+
     private lazy var placeholderLabel: UILabel = {
        let placeholderLabel = UILabel()
         placeholderLabel.text = "Привычки и события можно nобъединить по смыслу"
@@ -31,13 +31,13 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         placeholderLabel.font = .systemFont(ofSize: 12, weight: .medium)
         return placeholderLabel
     }()
-    
+
     private lazy var placeholderImage: UIImageView = {
         let placeholderImage = UIImageView()
         placeholderImage.image = UIImage(named: "plug_image")
         return placeholderImage
     } ()
-    
+
     private lazy var addCategoryButton: UIButton = {
         let addCategoryButton = UIButton()
         addCategoryButton.setTitle("Добавить категорию", for: .normal)
@@ -46,17 +46,17 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         addCategoryButton.addTarget(self, action: #selector(didTapAddCategoryButton), for: .touchUpInside)
         return addCategoryButton
     } ()
-    
+
     @objc private func didTapAddCategoryButton() {
         let vc = CreateNewTrackerCategory()
         vc.delegate = self
         present(vc, animated: true)
     }
-    
+
     private func addView() {
         [headerLabel, tableView, addCategoryButton, placeholderLabel, placeholderImage].forEach(view.setupView(_:))
     }
-    
+
     private func applyConstraints () {
         NSLayoutConstraint.activate([
             headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -78,12 +78,12 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
             placeholderImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }
-    
+
     func createCategory(_ category: TrackerCategory) {
         viewModel.selectCategory(category)
         viewModel.selectCategory(with: category.title)
     }
-    
+
     private func actionSheet(categoryToDelete: TrackerCategory) {
         let alert = UIAlertController(title: "Эта категория точно не нужна?",
                                       message: nil,
@@ -94,12 +94,12 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         })
         alert.addAction(UIAlertAction(title: "Отменить",
                                       style: .cancel) { _ in
-            
+
         })
-        
+
         self.present(alert, animated: true, completion: nil)
     }
-    
+
     func contexMenu(_ indexPath: IndexPath) -> UIMenu {
         let category = viewModel.categories[indexPath.row]
         let rename = UIAction(title: "Редактировать", image: nil) { [weak self] action in
@@ -112,7 +112,7 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
         }
         return UIMenu(children: [rename, delete])
     }
-    
+
     func tableView(_ tableView: UITableView,
                    contextMenuConfigurationForRowAt indexPath: IndexPath,
                    point: CGPoint) -> UIContextMenuConfiguration? {
@@ -120,17 +120,17 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
             return self.contexMenu(indexPath)
         })
     }
-    
+
     init(delegate: CategoriesViewModelDelegate?, selectedCategory: TrackerCategory?) {
         viewModel = CategoriesViewModel(delegate: delegate, selectedCategory: selectedCategory)
         super.init(nibName: nil, bundle: nil)
         viewModel.onChange = self.tableView.reloadData
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -159,29 +159,30 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
             return UITableViewCell()
         }
         if tableView.numberOfRows(inSection: indexPath.section) - 1 == indexPath.row {
-                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
         }
-        if let selectedIndexes = selectedIndexes, selectedIndexes == indexPath {
-            cell.accessoryType = .checkmark
-            cell.tintColor = .ypBlue
-        } else {
-            cell.accessoryType = .none
+            if let selectedIndexes = selectedIndexes, selectedIndexes == indexPath {
+                cell.accessoryType = .checkmark
+                cell.tintColor = .ypBlue
+            } else {
+                cell.accessoryType = .none
+            }
+            cell.selectionStyle = .none
+            cell.label.text = viewModel.categories[indexPath.row].title
+            return cell
+            
         }
-        cell.selectionStyle = .none
-        cell.label.text = viewModel.categories[indexPath.row].title
-        return cell
-       
+        
+        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            guard let cell = tableView.cellForRow(at: indexPath) as? TrackerCategoryTableViewCell else { return }
+            guard let category = cell.label.text else { return }
+            viewModel.selectCategory(with: category)
+            dismiss(animated: true)
+        }
+        
+        func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+            selectedIndexes = nil
+        }
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) as? TrackerCategoryTableViewCell else { return }
-        guard let category = cell.label.text else { return }
-        viewModel.selectCategory(with: category)
-        dismiss(animated: true)
-    }
-    
-   func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        selectedIndexes = nil
-    }
-}
-    

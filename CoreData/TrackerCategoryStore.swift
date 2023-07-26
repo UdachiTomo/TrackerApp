@@ -56,11 +56,12 @@ final class TrackerCategoryStore: NSObject {
         super.init()
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [ NSSortDescriptor(keyPath: \TrackerCategoryCoreData.titleCategory, ascending: true)]
-        let controller = NSFetchedResultsController(fetchRequest:
-                                                        fetchRequest,
-                                                    managedObjectContext: context,
-                                                    sectionNameKeyPath: nil,
-                                                    cacheName: nil)
+        let controller = NSFetchedResultsController(
+                    fetchRequest:fetchRequest,
+                    managedObjectContext: context,
+                    sectionNameKeyPath: nil,
+                    cacheName: nil
+                )
         controller.delegate = self
         self.fetchedResultsController = controller
         try controller.performFetch()

@@ -16,7 +16,7 @@ final class CategoriesViewModel: NSObject, TrackerCategoryStoreDelegate {
     
     private let trackerCategoryStore = TrackerCategoryStore()
     private(set) var selectedCategory: TrackerCategory?
-    private weak var delegate: CategoriesViewModelDelegate?
+    weak var delegate: CategoriesViewModelDelegate?
     
     init(delegate: CategoriesViewModelDelegate?, selectedCategory: TrackerCategory?) {
         self.selectedCategory = selectedCategory
@@ -28,11 +28,13 @@ final class CategoriesViewModel: NSObject, TrackerCategoryStoreDelegate {
     
     func deleteCategory(_ category: TrackerCategory) {
         try? self.trackerCategoryStore.deleteCategory(category)
+        print(category)
     }
     
     func selectCategory(with title: String) {
         let category = TrackerCategory(title: title, trackers: [])
         delegate?.createCategory(category: category)
+        print(category)
     }
     
     func selectCategory(_ category: TrackerCategory) {
@@ -42,6 +44,7 @@ final class CategoriesViewModel: NSObject, TrackerCategoryStoreDelegate {
     
     func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
         categories = trackerCategoryStore.trackerCategories
+        print(categories)
     }
 }
 
