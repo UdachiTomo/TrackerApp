@@ -158,18 +158,29 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TrackerCategoryTableViewCell.identifier, for: indexPath) as? TrackerCategoryTableViewCell else {
             return UITableViewCell()
         }
-        if tableView.numberOfRows(inSection: indexPath.section) - 1 == indexPath.row {
+        if indexPath.row == viewModel.categories.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
             cell.layer.cornerRadius = 16
             cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        } else if indexPath.row == 0 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            cell.contentView.clipsToBounds = true
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            cell.layer.cornerRadius = 0
         }
-            if let selectedIndexes = selectedIndexes, selectedIndexes == indexPath {
+        if viewModel.categories.count == 1 {
+            cell.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        }
+        
+        if let selectedIndexes = selectedIndexes, selectedIndexes == indexPath {
                 cell.accessoryType = .checkmark
                 cell.tintColor = .ypBlue
             } else {
                 cell.accessoryType = .none
             }
-            cell.selectionStyle = .none
             cell.label.text = viewModel.categories[indexPath.row].title
             return cell
             
