@@ -12,7 +12,7 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
     } ()
     
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: view.bounds)
+        let tableView = UITableView()
         tableView.register(TrackerCategoryTableViewCell.self, forCellReuseIdentifier: TrackerCategoryTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
@@ -23,7 +23,7 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
     } ()
     
     private lazy var placeholderLabel: UILabel = {
-       let placeholderLabel = UILabel()
+        let placeholderLabel = UILabel()
         placeholderLabel.text = "Привычки и события можно nобъединить по смыслу"
         placeholderLabel.tintColor = .black
         placeholderLabel.numberOfLines = 2
@@ -151,25 +151,32 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TrackerCategoryTableViewCell.identifier, for: indexPath) as? TrackerCategoryTableViewCell else {
             return UITableViewCell()
         }
-        
-        if tableView.numberOfRows(inSection: indexPath.section) - 1 == indexPath.row {
-                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
+        if indexPath.row == viewModel.categories.count - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
             cell.layer.cornerRadius = 16
-            cell.clipsToBounds = true
             cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        } else if indexPath.row == 0 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            cell.contentView.clipsToBounds = true
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            cell.layer.cornerRadius = 0
         }
+        if viewModel.categories.count == 1 {
+            cell.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        }
+        
         if let selectedIndexes = selectedIndexes, selectedIndexes == indexPath {
-            print("Я тут")
             cell.accessoryType = .checkmark
             cell.tintColor = .ypBlue
         } else {
             cell.accessoryType = .none
-            print("Я тоже тут")
         }
-        cell.selectionStyle = .none
         cell.label.text = viewModel.categories[indexPath.row].title
         return cell
-       
+        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -179,7 +186,7 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
         dismiss(animated: true)
     }
     
-   func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         selectedIndexes = nil
     }
     
@@ -191,4 +198,4 @@ extension TrackerCategoryViewController: UITableViewDataSource, UITableViewDeleg
         })
     }
 }
-    
+

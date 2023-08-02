@@ -49,7 +49,7 @@ final class TrackerFilterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         addView()
         applyConstraints()
     }

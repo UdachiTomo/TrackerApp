@@ -112,11 +112,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         completedCount: Int,
         pinned: Bool
     ) {
-        let mod10 = completedCount % 10
-        let mod100 = completedCount % 100
-        let not10To20 = mod100 < 10 || mod100 > 20
-        var str = "\(completedCount) "
-        
         trackerId = id
         trackerName.text = title
         collectionView.backgroundColor = color
@@ -124,17 +119,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         emojiLabel.text = emoji
         isCompletedToday = isCompleted
         checkButton.setImage(isCompletedToday ? UIImage(systemName: "checkmark")! : UIImage(systemName: "plus")!, for: .normal)
+        pinImageView.isHidden = !pinned
         checkButton.isEnabled = isEnabled
-        if completedCount == 0 {
-            str += "дней"
-        } else if mod10 == 1 && not10To20 {
-            str += "день"
-        } else if (mod10 == 2 || mod10 == 3 || mod10 == 4) && not10To20 {
-            str += "дня"
+        if isCompletedToday == true {
+            checkButton.alpha = 0.5
         } else {
-            str += "дней"
+            checkButton.alpha = 1
         }
-        resultLabel.text = str
+        resultLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberOfDay", comment: ""), completedCount)
     }
     
     override init(frame: CGRect) {

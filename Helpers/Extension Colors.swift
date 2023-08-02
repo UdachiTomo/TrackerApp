@@ -1,7 +1,7 @@
 import UIKit
 
 extension UIColor {
-    
+    static var viewBackgorundColor: UIColor {UIColor.systemBackground}
     static var backgroundColor: UIColor { UIColor(named: "backgroundColor") ?? UIColor.red }
     static var ypLightGray: UIColor { UIColor(named: "yPlightGray") ?? UIColor.lightGray }
     static var ypGray: UIColor { UIColor(named: "ypGray") ?? UIColor.gray }

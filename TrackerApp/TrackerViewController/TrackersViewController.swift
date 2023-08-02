@@ -40,7 +40,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     
     private lazy var trackerLabel: UILabel = {
         let trackerLabel = UILabel()
-        trackerLabel.text = "Трекеры"
+        trackerLabel.text = NSLocalizedString("trackers", tableName: "LocalizableString", comment: "")
         trackerLabel.textColor = .ypBlack
         trackerLabel.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         return trackerLabel
@@ -57,7 +57,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.locale = .current
         datePicker.accessibilityLabel = dateFormatter.string(from: datePicker.date)
         datePicker.layer.cornerRadius = 8
         datePicker.clipsToBounds = true
@@ -83,7 +83,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     
     private lazy var plugLabel: UILabel = {
         let plugLabel = UILabel()
-        plugLabel.text = "Что будем отслеживать?"
+        plugLabel.text = NSLocalizedString("emptyState.title", tableName: "LocalizableString", comment: "")
         plugLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         plugLabel.textColor = .ypBlack
         return plugLabel
@@ -146,14 +146,14 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     }
     
     private func actionSheet(trackerToDelete: Tracker) {
-        let alert = UIAlertController(title: "Уверены, что хотите удалить трекер?",
+        let alert = UIAlertController(title: NSLocalizedString("delete.confirmation", tableName: "LocalizableString", comment: ""),
                                       message: nil,
                                       preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Удалить",
+        alert.addAction(UIAlertAction(title: NSLocalizedString("delete", tableName: "LocalizableString", comment: ""),
                                       style: .destructive) { [weak self] _ in
             self?.deleteTracker(trackerToDelete)
         })
-        alert.addAction(UIAlertAction(title: "Отменить",
+        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", tableName: "LocalizableString", comment: ""),
                                       style: .cancel) { _ in
         })
         self.present(alert, animated: true, completion: nil)
@@ -177,9 +177,8 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
             vc.category = tracker.category
             self?.present(vc, animated: true)
         }
-        let delete = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] action in
+        let delete = UIAction(title: NSLocalizedString("delete", tableName: "LocalizableString", comment: ""), image: nil, attributes: .destructive) { [weak self] action in
             self?.actionSheet(trackerToDelete: tracker)
-            print("Event: delete")
         }
         return UIMenu(children: [pin, rename, delete])
     }
@@ -200,6 +199,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     
     private func updateCategories(with categories: [TrackerCategory]) {
         var newCategories: [TrackerCategory] = []
+        var pinnedTrackers: [Tracker] = []
         visibleCategories = trackerCategoryStore.trackerCategories
         for category in categories {
             var newTrackers: [Tracker] = []
@@ -236,6 +236,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
             }
         }
         visibleCategories = newCategories
+        self.pinnedTrackers = pinnedTrackers
         trackersCollectionView.reloadData()
     }
     

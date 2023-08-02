@@ -6,10 +6,10 @@ struct TrackerStoreUpdate {
         let oldIndex: Int
         let newIndex: Int
     }
-    let insertedIndexes: IndexSet
-    let deletedIndexes: IndexSet
-    let updatedIndexes: IndexSet
-    let movedIndexes: Set<Move>
+    let insertedIndexes = [IndexSet]()
+    let deletedIndexes = [IndexSet]()
+    let updatedIndexes = [IndexSet]()
+    let movedIndexes = Set<Move>()
 }
 
 protocol TrackerStoreDelegate: AnyObject {
@@ -122,15 +122,11 @@ class TrackerStore: NSObject {
     }
     
     func tracker(from data: TrackerCoreData) throws -> Tracker {
-        guard let title = data.title else { throw MainCoreDataError.error }
-        
-        guard let uuid = data.id else { throw MainCoreDataError.error }
-        
-        guard let emoji = data.emoji else { throw MainCoreDataError.error }
-        
-        guard let color = data.color else { throw MainCoreDataError.error }
-        
-        guard let schedule = data.schedule else { throw MainCoreDataError.error }
+        guard let title = data.title,
+              let uuid = data.id,
+              let emoji = data.emoji,
+              let color = data.color,
+              let schedule = data.schedule else { throw MainCoreDataError.error }
         
         let pinned = data.pinned
         
@@ -151,12 +147,7 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         _ controller: NSFetchedResultsController<NSFetchRequestResult>) {
             delegate?.store(
                 self,
-                didUpdate: TrackerStoreUpdate(
-                    insertedIndexes: insertedIndexes ?? [],
-                    deletedIndexes: deletedIndexes ?? [],
-                    updatedIndexes: updatedIndexes ?? [],
-                    movedIndexes: movedIndexes ?? []
-                )
+                didUpdate: TrackerStoreUpdate()
             )
             insertedIndexes = nil
             deletedIndexes = nil
