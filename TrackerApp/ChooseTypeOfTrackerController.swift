@@ -26,8 +26,9 @@ final class ChooseTypeOfTrackerController: UIViewController {
     private lazy var regularButton: UIButton = {
         let regularButton = UIButton()
         regularButton.setTitle("Привычка", for: .normal)
+        regularButton.setTitleColor(.ypWhite, for: .normal)
         regularButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        regularButton.backgroundColor = .black
+        regularButton.backgroundColor = .ypBlack
         regularButton.layer.cornerRadius = 16
         regularButton.addTarget(self, action: #selector(regularTapButton), for: .touchUpInside)
         return regularButton
@@ -36,8 +37,9 @@ final class ChooseTypeOfTrackerController: UIViewController {
     private lazy var irregularButton: UIButton = {
         let irregularButton = UIButton()
         irregularButton.setTitle("Нерегулярное событие", for: .normal)
+        irregularButton.setTitleColor(.ypWhite, for: .normal)
         irregularButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        irregularButton.backgroundColor = .black
+        irregularButton.backgroundColor = .ypBlack
         irregularButton.layer.cornerRadius = 16
         irregularButton.addTarget(self, action: #selector(irregularTapButton), for: .touchUpInside)
         return irregularButton

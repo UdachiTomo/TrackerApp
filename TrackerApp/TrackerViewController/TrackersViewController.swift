@@ -49,6 +49,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     private lazy var plusTrackerButton: UIButton = {
         let plustTrackerButton = UIButton()
         plustTrackerButton.setImage(UIImage(named: "plus"), for: .normal)
+        plustTrackerButton.tintColor = .ypBlack
         plustTrackerButton.addTarget(self, action: #selector(createNewTrackers), for: .touchUpInside)
         return plustTrackerButton
     } ()
