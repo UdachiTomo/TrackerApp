@@ -25,7 +25,7 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
     private lazy var placeholderLabel: UILabel = {
         let placeholderLabel = UILabel()
         placeholderLabel.text = "Привычки и события можно nобъединить по смыслу"
-        placeholderLabel.tintColor = .black
+        placeholderLabel.tintColor = .ypBlack
         placeholderLabel.numberOfLines = 2
         placeholderLabel.textAlignment = .center
         placeholderLabel.font = .systemFont(ofSize: 12, weight: .medium)
@@ -41,7 +41,8 @@ final class TrackerCategoryViewController: UIViewController, CreateNewTrackerCat
     private lazy var addCategoryButton: UIButton = {
         let addCategoryButton = UIButton()
         addCategoryButton.setTitle("Добавить категорию", for: .normal)
-        addCategoryButton.backgroundColor = .black
+        addCategoryButton.setTitleColor(.ypWhite, for: .normal)
+        addCategoryButton.backgroundColor = .ypBlack
         addCategoryButton.layer.cornerRadius = 16
         addCategoryButton.addTarget(self, action: #selector(didTapAddCategoryButton), for: .touchUpInside)
         return addCategoryButton

@@ -7,7 +7,7 @@ final class CreateNewTrackerTableViewCell: UITableViewCell {
     lazy var firstLabel: UILabel = {
         let firstLabel = UILabel()
         firstLabel.font = UIFont.systemFont(ofSize: 17)
-        firstLabel.textColor = .black
+        firstLabel.textColor = .ypBlack
         firstLabel.textAlignment = .left
         return firstLabel
     } ()
@@ -15,7 +15,7 @@ final class CreateNewTrackerTableViewCell: UITableViewCell {
     lazy var secondLabel: UILabel = {
         let secondLabel = UILabel()
         secondLabel.font = UIFont.systemFont(ofSize: 17)
-        secondLabel.textColor = .gray
+        secondLabel.textColor = .ypGray
         return secondLabel
     } ()
     

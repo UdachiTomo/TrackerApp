@@ -84,7 +84,7 @@ final class OnboardingViewControlller: UIPageViewController, UIPageViewControlle
             fatalError("Invalid Configuration")
         }
         window.rootViewController = TabBarController()
-        //UserDefaults.standard.set(true, forKey: "isChecked")
+        UserDefaults.standard.set(true, forKey: "isChecked")
     }
     
     private func addFirstPage() {

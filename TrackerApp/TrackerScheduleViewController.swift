@@ -11,7 +11,7 @@ final class TrackerScheduleViewController: UIViewController, WeekDayTableViewCel
     private lazy var headerLabel: UILabel = {
         let headerLabel = UILabel()
         headerLabel.text = "Расписание"
-        headerLabel.textColor = .black
+        headerLabel.textColor = .ypBlack
         headerLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return headerLabel
     } ()
@@ -22,6 +22,7 @@ final class TrackerScheduleViewController: UIViewController, WeekDayTableViewCel
         tableView.layer.cornerRadius = 16
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.separatorColor = .ypGray
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         return tableView
     } ()
@@ -30,7 +31,8 @@ final class TrackerScheduleViewController: UIViewController, WeekDayTableViewCel
     private lazy var finishButton: UIButton = {
         let finishButton = UIButton()
         finishButton.setTitle("Готово", for: .normal)
-        finishButton.backgroundColor = .black
+        finishButton.setTitleColor(.ypWhite, for: .normal)
+        finishButton.backgroundColor = .ypBlack
         finishButton.layer.cornerRadius = 16
         finishButton.addTarget(self, action: #selector(didTapFinishButton), for: .touchUpInside)
         return finishButton
@@ -74,7 +76,7 @@ final class TrackerScheduleViewController: UIViewController, WeekDayTableViewCel
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .viewBackgorundColor
         addView()
         applyConstraints()
     }
@@ -123,7 +125,7 @@ class WeekDayTableViewCell: UITableViewCell {
     lazy var label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.font = .systemFont(ofSize: 17)
         return label
     } ()

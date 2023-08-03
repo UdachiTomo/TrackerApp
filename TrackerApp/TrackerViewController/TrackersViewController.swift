@@ -22,6 +22,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerStore = TrackerStore()
+    private let colors = Colors()
     private var pinnedTrackers: [Tracker] = []
     private var trackers: [Tracker] = []
     private var completedTrackers: [TrackerRecord] = []
@@ -56,10 +57,14 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
+        datePicker.backgroundColor = .datePickerColor
+        datePicker.tintColor = .ypBlue
+        datePicker.overrideUserInterfaceStyle = .light
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
         datePicker.locale = .current
         datePicker.accessibilityLabel = dateFormatter.string(from: datePicker.date)
+        datePicker.layer.masksToBounds = true
         datePicker.layer.cornerRadius = 8
         datePicker.clipsToBounds = true
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
@@ -339,6 +344,7 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
 extension TrackersViewController: UITextViewDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         searchTrackerField.resignFirstResponder()
+        return true
     }
     
     func textFieldShouldClear(_ textField: UITextField) -> Bool {

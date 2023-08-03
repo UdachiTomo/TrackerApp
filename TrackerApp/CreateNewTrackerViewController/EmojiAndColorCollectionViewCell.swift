@@ -46,7 +46,7 @@ final class EmojiAndColorSupplementaryView: UICollectionReusableView {
     
     var titleLabel: UILabel = {
         let titleLabel = UILabel()
-        titleLabel.textColor = .black
+        titleLabel.textColor = .ypBlack
         titleLabel.font = .boldSystemFont(ofSize: 19)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         return titleLabel

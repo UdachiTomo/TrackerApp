@@ -23,6 +23,7 @@ final class CreateNewTrackerCategory: UIViewController {
         textField.backgroundColor = .backgroundColor
         textField.layer.cornerRadius = 16
         textField.font = .systemFont(ofSize: 17)
+        textField.delegate = self
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         textField.leftViewMode = .always
         UITextField.appearance().clearButtonMode = .whileEditing
@@ -90,3 +91,9 @@ final class CreateNewTrackerCategory: UIViewController {
     }
 }
 
+extension CreateNewTrackerCategory: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        categoryTitleTextField.resignFirstResponder()
+        return true
+    }
+}

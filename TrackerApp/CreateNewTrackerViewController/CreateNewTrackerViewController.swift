@@ -89,6 +89,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         titleTrackerTextField.placeholder = "Введите название трекера"
         titleTrackerTextField.clearButtonMode = .whileEditing
         titleTrackerTextField.backgroundColor = .ypLightGray
+        titleTrackerTextField.delegate = self
         titleTrackerTextField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         titleTrackerTextField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         titleTrackerTextField.leftViewMode = .always
@@ -125,6 +126,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         tableView.dataSource = self
         tableView.delegate = self
         tableView.layer.cornerRadius = 8
+        tableView.separatorColor = .ypGray
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 345, bottom: 0, right: 345)
         return tableView
     } ()
@@ -472,5 +474,12 @@ extension CreateNewTrackerViewController: UICollectionViewDelegateFlowLayout {
         let indexPath = IndexPath(row: 0, section: section)
         let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
         return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+    }
+}
+
+extension CreateNewTrackerViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        titleTrackerTextField.resignFirstResponder()
+        return true
     }
 }
