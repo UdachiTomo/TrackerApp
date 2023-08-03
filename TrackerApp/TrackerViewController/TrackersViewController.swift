@@ -1,23 +1,6 @@
 import UIKit
 
-final class TrackersViewController: UIViewController, UITextFieldDelegate, ChooseTypeOfTrackerControllerProtocol, TrackerFilterViewControllerDelegate {
-    func filterSelected(filter: Filter) {
-        selectedFilter = filter
-        searchText = ""
-        switch filter {
-        case .all:
-            updateCategories(with: trackerCategoryStore.trackerCategories)
-        case .today:
-            datePicker.date = Date()
-            dateChanged(datePicker)
-            updateCategories(with: trackerCategoryStore.trackerCategories)
-        case .completed:
-            updateCategories(with: trackerCategoryStore.trackerCategories)
-        case .uncompleted:
-            updateCategories(with: trackerCategoryStore.trackerCategories)
-        }
-    }
-    
+final class TrackersViewController: UIViewController, UITextFieldDelegate {
     
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
@@ -278,24 +261,6 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate, Choos
         ])
     }
     
-    func createTracker(_ tracker: Tracker, categoryTitle: String) {
-        var categoryToUpdate: TrackerCategory?
-        let categories: [TrackerCategory] = trackerCategoryStore.trackerCategories
-        for i in 0..<categories.count {
-            if categories[i].title == categoryTitle {
-                categoryToUpdate = categories[i]
-            }
-        }
-        if categoryToUpdate != nil {
-            try? trackerCategoryStore.addTracker(tracker, to: categoryToUpdate!)
-        } else {
-            let newCategory = TrackerCategory(title: categoryTitle, trackers: [tracker])
-            categoryToUpdate = newCategory
-            try? trackerCategoryStore.addNewTrackerCategory(categoryToUpdate!)
-        }
-        updateCategories(with: trackerCategoryStore.trackerCategories)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         addView()
@@ -332,12 +297,12 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
             record.date.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
         }) {
             completedTrackers.remove(at: index)
-            try? trackerRecordStore.deleteTrackerRecord(TrackerRecord(trackerId: id, date: datePicker.date))
+            try? trackerRecordStore.deleteTrackerRecord(with: id, date: datePicker.date)
         } else {
             completedTrackers.append(TrackerRecord(trackerId: id, date: datePicker.date))
             try? trackerRecordStore.addNewTrackerRecord(TrackerRecord(trackerId: id, date: datePicker.date))
         }
-        trackersCollectionView.reloadData()
+        updateCategories(with: trackerCategoryStore.trackerCategories)
     }
 }
 
@@ -491,5 +456,42 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         guard let cell = collectionView.cellForItem(at: indexPath) as? TrackersCollectionViewCell else { return nil }
         
         return UITargetedPreview(view: cell.updateMenu)
+    }
+}
+
+extension TrackersViewController: TrackerFilterViewControllerDelegate, ChooseTypeOfTrackerControllerProtocol {
+    func filterSelected(filter: Filter) {
+        selectedFilter = filter
+        searchText = ""
+        switch filter {
+        case .all:
+            updateCategories(with: trackerCategoryStore.trackerCategories)
+        case .today:
+            datePicker.date = Date()
+            dateChanged(datePicker)
+            updateCategories(with: trackerCategoryStore.trackerCategories)
+        case .completed:
+            updateCategories(with: trackerCategoryStore.trackerCategories)
+        case .uncompleted:
+            updateCategories(with: trackerCategoryStore.trackerCategories)
+        }
+    }
+    
+    func createTracker(_ tracker: Tracker, categoryTitle: String) {
+        var categoryToUpdate: TrackerCategory?
+        let categories: [TrackerCategory] = trackerCategoryStore.trackerCategories
+        for i in 0..<categories.count {
+            if categories[i].title == categoryTitle {
+                categoryToUpdate = categories[i]
+            }
+        }
+        if categoryToUpdate != nil {
+            try? trackerCategoryStore.addTracker(tracker, to: categoryToUpdate!)
+        } else {
+            let newCategory = TrackerCategory(title: categoryTitle, trackers: [tracker])
+            categoryToUpdate = newCategory
+            try? trackerCategoryStore.addNewTrackerCategory(categoryToUpdate!)
+        }
+        updateCategories(with: trackerCategoryStore.trackerCategories)
     }
 }
