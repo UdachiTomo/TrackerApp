@@ -98,7 +98,9 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             checkButton.heightAnchor.constraint(equalToConstant: 34),
             checkButton.widthAnchor.constraint(equalToConstant: 34 ),
             resultLabel.centerYAnchor.constraint(equalTo: checkButton.centerYAnchor),
-            resultLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12)
+            resultLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            pinImageView.topAnchor.constraint(equalTo: collectionView.topAnchor, constant: 12),
+            pinImageView.trailingAnchor.constraint(equalTo: collectionView.trailingAnchor, constant: -4)
         ])
     }
     

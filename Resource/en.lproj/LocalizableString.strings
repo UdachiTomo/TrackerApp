@@ -2,4 +2,5 @@
 "delete" = "Delete";
 "delete.confirmation" = "Уверены что хотите удалить трекер?";
 "cancel" = "Cancel";
-"trackers" = "Trackers";
+"trackers" = "Трекеры";
+"statistic" = "Статистика";

@@ -11,6 +11,7 @@
 		CE1FCD802A7A794800D310E8 /* LocalizableString.strings in Resources */ = {isa = PBXBuildFile; fileRef = CE1FCD822A7A794800D310E8 /* LocalizableString.strings */; };
 		CE1FCD862A7A81E200D310E8 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = CE1FCD882A7A81E200D310E8 /* Localizable.stringsdict */; };
 		CE1FCD8D2A7BDDEC00D310E8 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1FCD8C2A7BDDEC00D310E8 /* AnalyticsService.swift */; };
+		CE1FCD8F2A7C096800D310E8 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1FCD8E2A7C096800D310E8 /* Analytics.swift */; };
 		CE3E75942A5C3CCE0030CAAA /* Extension Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3E75932A5C3CCE0030CAAA /* Extension Date.swift */; };
 		CE3E75BD2A6057E50030CAAA /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3E75BC2A6057E50030CAAA /* TrackerStore.swift */; };
 		CE3E75BF2A6057F70030CAAA /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3E75BE2A6057F70030CAAA /* TrackerCategoryStore.swift */; };
@@ -56,6 +57,7 @@
 		CE1FCD872A7A81E200D310E8 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		CE1FCD892A7A81E400D310E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		CE1FCD8C2A7BDDEC00D310E8 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
+		CE1FCD8E2A7C096800D310E8 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		CE3E75932A5C3CCE0030CAAA /* Extension Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension Date.swift"; sourceTree = "<group>"; };
 		CE3E75B92A6056030030CAAA /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
 		CE3E75BC2A6057E50030CAAA /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 				CE9420682A3B5A1E001976A5 /* Tracker.swift */,
 				CE94206A2A3B5B41001976A5 /* WeekDay.swift */,
 				CE3E75E42A6BFFED0030CAAA /* Filter.swift */,
+				CE1FCD8E2A7C096800D310E8 /* Analytics.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -421,6 +424,7 @@
 				CE3E75E52A6BFFED0030CAAA /* Filter.swift in Sources */,
 				CE9420632A3B5899001976A5 /* TrackerScheduleViewController.swift in Sources */,
 				CE94206B2A3B5B41001976A5 /* WeekDay.swift in Sources */,
+				CE1FCD8F2A7C096800D310E8 /* Analytics.swift in Sources */,
 				CEB4D3542A27AEB9004FAE43 /* ChooseTypeOfTrackerController.swift in Sources */,
 				CEB4D3562A27AED4004FAE43 /* CreateNewTrackerViewController.swift in Sources */,
 				CEB4D33A2A264067004FAE43 /* SceneDelegate.swift in Sources */,
