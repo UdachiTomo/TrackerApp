@@ -19,10 +19,9 @@ protocol TrackerRecordStoreDelegate: AnyObject {
     )
 }
 
-class TrackerRecordStore: NSObject {
-    private weak var delegate: TrackerRecordStoreDelegate?
+final class TrackerRecordStore: NSObject {
+    weak var delegate: TrackerRecordStoreDelegate?
     private let context: NSManagedObjectContext
-    static let shared = TrackerRecordStore()
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
@@ -82,12 +81,6 @@ class TrackerRecordStore: NSObject {
     func updateExistingTrackerRecord(_ trackerRecordCoreData: TrackerRecordCoreData, with record: TrackerRecord) {
         trackerRecordCoreData.id = record.trackerId
         trackerRecordCoreData.date = record.date
-    }
-    
-    func fetchTrackerRecord() throws -> [TrackerRecord] {
-        let fetchRequest = TrackerRecordCoreData.fetchRequest()
-        let trackerRecordFromCoreData = try context.fetch(fetchRequest)
-        return try trackerRecordFromCoreData.map { try self.trackerRecord(from: $0) }
     }
     
     func trackerRecord(from data: TrackerRecordCoreData) throws -> TrackerRecord {

@@ -7,3 +7,10 @@ enum Items: String, CaseIterable {
     case edit = "edit"
     case delete = "delete"
 }
+
+enum Events: String, CaseIterable {
+    case open = "open"
+    case close = "close"
+    case click = "click"
+}
+

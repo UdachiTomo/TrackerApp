@@ -27,7 +27,7 @@ final class OnboardingViewControlller: UIPageViewController, UIPageViewControlle
         startButton.setTitle("Вот это технологии!", for: .normal)
         startButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         startButton.accessibilityIdentifier = "startButton"
-        startButton.backgroundColor = .black
+        startButton.backgroundColor = .ypBlack
         startButton.addTarget(self, action: #selector(toMainView), for: .touchUpInside)
         startButton.translatesAutoresizingMaskIntoConstraints = false
         return startButton
@@ -39,7 +39,7 @@ final class OnboardingViewControlller: UIPageViewController, UIPageViewControlle
         startButton.setTitle("Вот это технологии!", for: .normal)
         startButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         startButton.accessibilityIdentifier = "startButton"
-        startButton.backgroundColor = .black
+        startButton.backgroundColor = .ypBlack
         startButton.addTarget(self, action: #selector(toMainView), for: .touchUpInside)
         startButton.translatesAutoresizingMaskIntoConstraints = false
         return startButton

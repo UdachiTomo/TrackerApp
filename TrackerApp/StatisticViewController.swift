@@ -49,6 +49,7 @@ final class StatisticViewController: UIViewController {
     
     private func addView() {
         [titleLabel, plugImage, plugLabel, completedTrackerView, resultTitle, resultSubTitle].forEach(view.setupView(_:))
+        
     }
     
     private func applyConstraints() {
@@ -88,6 +89,7 @@ final class StatisticViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .viewBackgorundColor
+        trackerRecordStore.delegate = self
         addView()
         applyConstraints()
         updateCompletedTrackers()

@@ -2,6 +2,7 @@ import UIKit
 
 final class TrackersViewController: UIViewController, UITextFieldDelegate {
     
+    private let analyticsService = AnalyticsService()
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerStore = TrackerStore()
@@ -11,7 +12,6 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
     private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
     private var isCompletedToday: Bool = true
-    private var trackerId: UUID? = nil
     private var currentDate: Int?
     private var searchText: String = ""
     private var selectedFilter: Filter?
@@ -28,7 +28,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
         trackerLabel.textColor = .ypBlack
         trackerLabel.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         return trackerLabel
-    } ()
+    }()
     
     private lazy var plusTrackerButton: UIButton = {
         let plustTrackerButton = UIButton()
@@ -36,7 +36,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
         plustTrackerButton.tintColor = .ypBlack
         plustTrackerButton.addTarget(self, action: #selector(createNewTrackers), for: .touchUpInside)
         return plustTrackerButton
-    } ()
+    }()
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -52,7 +52,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
         datePicker.clipsToBounds = true
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         return datePicker
-    } ()
+    }()
     
     private lazy var searchTrackerField: UISearchTextField = {
         let searchTrackerField = UISearchTextField()
@@ -62,13 +62,13 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
         searchTrackerField.delegate = self
         searchTrackerField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         return searchTrackerField
-    } ()
+    }()
     
     private lazy var plugImage: UIImageView = {
         let plugImage = UIImageView()
         plugImage.image = UIImage(named: "plug_image")
         return plugImage
-    } ()
+    }()
     
     private lazy var plugLabel: UILabel = {
         let plugLabel = UILabel()
@@ -76,7 +76,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
         plugLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         plugLabel.textColor = .ypBlack
         return plugLabel
-    } ()
+    }()
     
     private lazy var trackersCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -100,6 +100,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
     }()
     
     @objc private func filtersButtonAction() {
+        analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.filter.rawValue])
         print("Event: filter")
         let vc = TrackerFilterViewController()
         vc.delegate = self
@@ -108,6 +109,8 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc private func createNewTrackers() {
+        analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.add_track.rawValue])
+        print("Event: add_tracker")
         let viewController = ChooseTypeOfTrackerController()
         viewController.delegate = self
         present(viewController, animated: true)
@@ -123,6 +126,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func textFieldChanged() {
+        
         searchText = searchTrackerField.text ?? ""
         plugImage.image = searchText.isEmpty ? UIImage(named: "plug_image") : UIImage(named: "error")
         plugLabel.text = searchText.isEmpty ? "Что будем отслеживать?" : "Ничего не найдено"
@@ -132,6 +136,8 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
     
     private func deleteTracker(_ tracker: Tracker) {
         try? self.trackerStore.deleteTracker(tracker)
+        analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.delete.rawValue])
+        print("Event: delete_tracker")
     }
     
     private func actionSheet(trackerToDelete: Tracker) {
@@ -160,6 +166,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
             try? self?.trackerStore.togglePinTracker(tracker)
         }
         let rename = UIAction(title: "Редактировать", image: nil) { [weak self] action in
+            self?.analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.edit.rawValue])
             let vc = CreateNewTrackerViewController(typeOfEvent: .regular)
             vc.editTracker = tracker
             vc.editTrackerDate = self?.datePicker.date ?? Date()
@@ -167,6 +174,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
             self?.present(vc, animated: true)
         }
         let delete = UIAction(title: NSLocalizedString("delete", tableName: "LocalizableString", comment: ""), image: nil, attributes: .destructive) { [weak self] action in
+            self?.analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.delete.rawValue])
             self?.actionSheet(trackerToDelete: tracker)
         }
         return UIMenu(children: [pin, rename, delete])
@@ -263,22 +271,27 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        analyticsService.report(event: .open, params: ["Screen" : "Main"])
+        print("Event: open")
         addView()
         applyConstraints()
         setNavBar()
         setDayOfWeek()
         updateCategories(with: trackerCategoryStore.trackerCategories)
-        do {
-            completedTrackers = try self.trackerRecordStore.fetchTrackerRecord()
-        } catch {
-            fatalError("")
-        }
         trackerCategoryStore.delegate = self
+        trackerRecordStore.delegate = self
         trackerStore.delegate = self
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        analyticsService.report(event: .close, params: ["Screen" : "Main"])
+        print("Event: close")
     }
 }
 
-extension TrackersViewController: TrackerStoreDelegate, TrackerCategoryStoreDelegate {
+extension TrackersViewController: TrackerStoreDelegate, TrackerCategoryStoreDelegate, TrackerRecordStoreDelegate {
+
     func store(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
         updateCategories(with: trackerCategoryStore.trackerCategories)
         trackersCollectionView.reloadData()
@@ -286,6 +299,11 @@ extension TrackersViewController: TrackerStoreDelegate, TrackerCategoryStoreDele
     
     func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
         visibleCategories = trackerCategoryStore.trackerCategories
+        trackersCollectionView.reloadData()
+    }
+    
+    func store(_ store: TrackerRecordStore, didUpdate update: TrackerRecordStoreUpdate) {
+        updateCategories(with: trackerCategoryStore.trackerCategories)
         trackersCollectionView.reloadData()
     }
 }
@@ -299,6 +317,8 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
             completedTrackers.remove(at: index)
             try? trackerRecordStore.deleteTrackerRecord(with: id, date: datePicker.date)
         } else {
+            analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.track.rawValue])
+            print("Event: completed_track")
             completedTrackers.append(TrackerRecord(trackerId: id, date: datePicker.date))
             try? trackerRecordStore.addNewTrackerRecord(TrackerRecord(trackerId: id, date: datePicker.date))
         }
