@@ -278,6 +278,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
         setNavBar()
         setDayOfWeek()
         updateCategories(with: trackerCategoryStore.trackerCategories)
+        completedTrackers = trackerRecordStore.trackerRecords
         trackerCategoryStore.delegate = self
         trackerRecordStore.delegate = self
         trackerStore.delegate = self
@@ -303,7 +304,7 @@ extension TrackersViewController: TrackerStoreDelegate, TrackerCategoryStoreDele
     }
     
     func store(_ store: TrackerRecordStore, didUpdate update: TrackerRecordStoreUpdate) {
-        updateCategories(with: trackerCategoryStore.trackerCategories)
+        completedTrackers = trackerRecordStore.trackerRecords
         trackersCollectionView.reloadData()
     }
 }
@@ -466,7 +467,6 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         guard let identifier = configuration.identifier as? String else { return nil }
         let components = identifier.components(separatedBy: ":")
-        print(identifier)
         guard let rowString = components.first,
               let sectionString = components.last,
               let row = Int(rowString),
