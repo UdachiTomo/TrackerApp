@@ -1,6 +1,6 @@
-"emptyState.title" = "Что будем отслеживать?";
+"emptyState.title" = "What will we track?";
 "delete" = "Delete";
-"delete.confirmation" = "Уверены что хотите удалить трекер?";
+"delete.confirmation" = "Are you sure you want to delete the tracker?";
 "cancel" = "Cancel";
 "trackers" = "Trackers";
 "statistic" = "Statistic";
