@@ -10,7 +10,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     public weak var delegate: TrackersCollectionViewCellDelegate?
     private var isCompletedToday: Bool = false
     private var trackerId: UUID? = nil
-    private var indexPath: IndexPath?
+    
     public var updateMenu: UIView {
         return collectionView
     }
@@ -136,6 +136,10 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         addView()
         applyConstraints()
         addSubview(checkButton)
+        collectionView.addSubview(pinImageView)
+        collectionView.addSubview(emojiView)
+        collectionView.addSubview(trackerName)
+        collectionView.addSubview(emojiLabel)
     }
     
     required init?(coder: NSCoder) {

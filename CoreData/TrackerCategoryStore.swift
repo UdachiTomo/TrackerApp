@@ -91,7 +91,7 @@ final class TrackerCategoryStore: NSObject {
             let track = TrackerCoreData(context: context)
             track.id = tracker.id
             track.title = tracker.title
-            track.color = tracker.color.hexString
+            track.color = tracker.color?.hexString
             track.emoji = tracker.emoji
             track.schedule = tracker.schedule?.compactMap { $0.rawValue }
             trackerCategoryCoreData.addToTrackers(track)
@@ -107,7 +107,7 @@ final class TrackerCategoryStore: NSObject {
         trackerCoreData.id = tracker.id
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.schedule = tracker.schedule?.compactMap { $0.rawValue }
-        trackerCoreData.color = tracker.color.hexString
+        trackerCoreData.color = tracker.color?.hexString
         
         category?.addToTrackers(trackerCoreData)
         try context.save()

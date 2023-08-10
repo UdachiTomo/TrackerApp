@@ -15,6 +15,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     
     public weak var delegate: CreateNewTrackerViewControllerProtocol?
     private let trackerStore = TrackerStore()
+    private let trackerRecordStore = TrackerRecordStore()
     private var typeOfEvent: TypeOfEvent
     private var eventButtons: [String] {
         return typeOfEvent.caseOfButton
@@ -100,7 +101,8 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     
     private lazy var addTrackerButton: UIButton = {
         let addTrackerButton = UIButton()
-        addTrackerButton.setTitle("Создать", for: .normal)
+        var titileLabel = editTracker == nil ? "Создать" : "Сохранить"
+        addTrackerButton.setTitle(titileLabel, for: .normal)
         addTrackerButton.setTitleColor(.white, for: .normal)
         addTrackerButton.layer.cornerRadius = 16
         addTrackerButton.backgroundColor = .ypGray
@@ -148,6 +150,16 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         return label
     }()
     
+    private lazy var complatedDay: UILabel = {
+        let label = UILabel()
+        label.textColor = .ypBlack
+        label.text = "Дней"
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.register(EmojiAndColorCollectionViewCell.self, forCellWithReuseIdentifier: EmojiAndColorCollectionViewCell.identifier)
@@ -161,6 +173,21 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     private func setupButtonStack() {
         buttonStack.addArrangedSubview(cancerTrackerButton)
         buttonStack.addArrangedSubview(addTrackerButton)
+    }
+    
+    private func setupEditTracker() {
+        if let editTracker = editTracker {
+            schedule = editTracker.schedule ?? []
+            addDaysToSchedule(schedule: schedule)
+            titleTrackerTextField.text = editTracker.title
+            headerLabel.text = "Редактирование привычки"
+            selectedColor = editTracker.color
+            print(selectedColor as Any)
+            selectedEmoji = editTracker.emoji  ?? ""
+            print(selectedEmoji)
+            categoryTitle = editTracker.category?.title ?? ""
+            updateCreateEventButton()
+        }
     }
     
     
@@ -179,7 +206,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         var tracker: Tracker?
         if editTracker == nil {
             if typeOfEvent == .regular {
-                tracker = Tracker(id: UUID(), title: titleTrackerTextField.text ?? "", color: selectedColor ?? .color1, emoji: selectedEmoji, schedule: schedule, pinned: false)
+                tracker = Tracker(id: UUID(), title: titleTrackerTextField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule, pinned: false)
             } else {
                 schedule = WeekDay.allCases
                 tracker = Tracker(id: UUID(), title: titleTrackerTextField.text ?? "", color: selectedColor ?? .color1, emoji: selectedEmoji, schedule: schedule, pinned: false)
@@ -190,7 +217,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
             guard let editTracker = editTracker else { return }
             try? trackerStore.updateTracker(newTitle: titleTrackerTextField.text ?? "",
                                             newEmoji: selectedEmoji,
-                                            newColor: selectedEmoji.color.hexString,
+                                            newColor: selectedColor?.hexString ?? "",
                                             newSchedule: schedule,
                                             categoryTitle: category?.title ?? "Без названия",
                                             editableTracker: editTracker)
@@ -305,6 +332,22 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         applyConstraints()
         setupButtonStack()
         view.addSubview(buttonStack)
+        setupEditTracker()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard let indexPathEmoji = emoji.firstIndex(where: {$0 == selectedEmoji}) else { return }
+        let cellEmoji = self.collectionView.cellForItem(at: IndexPath(row: indexPathEmoji, section: 0))
+        cellEmoji?.backgroundColor = .ypLightGray
+        selectedEmojiCell = IndexPath(row: indexPathEmoji, section: 0)
+        
+        guard let indexPathColor = color.firstIndex(where: {$0.hexString == selectedColor?.hexString}) else { return }
+        let cellColor = self.collectionView.cellForItem(at: IndexPath(row: indexPathColor, section: 1))
+        cellColor?.layer.borderWidth = 3
+        cellColor?.layer.cornerRadius = 8
+        cellColor?.layer.borderColor = UIColor.ypLightGray.cgColor
+        selectedColorCell = IndexPath(item: indexPathColor, section: 1)
     }
 }
 

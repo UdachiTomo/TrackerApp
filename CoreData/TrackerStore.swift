@@ -103,7 +103,7 @@ class TrackerStore: NSObject {
         trackerCoreData.id = tracker.id
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.schedule = tracker.schedule?.compactMap { $0.rawValue }
-        trackerCoreData.color = tracker.color.hexString
+        trackerCoreData.color = tracker.color?.hexString
     }
     
     func fetchTracker() throws -> [Tracker] {
