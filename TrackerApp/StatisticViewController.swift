@@ -83,7 +83,9 @@ final class StatisticViewController: UIViewController {
         resultSubTitle.text = String.localizedStringWithFormat(NSLocalizedString("trackerCompleted", comment: ""), completedTrackers.count)
         plugLabel.isHidden = completedTrackers.count > 0
         plugImage.isHidden = completedTrackers.count > 0
-        completedTrackerView.isHidden = completedTrackers.count == 0
+        resultTitle.isHidden = completedTrackers.count == 0
+        resultSubTitle.isHidden = completedTrackers.count == 0
+        
     }
     
     override func viewDidLoad() {
