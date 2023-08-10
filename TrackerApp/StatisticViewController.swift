@@ -96,6 +96,11 @@ final class StatisticViewController: UIViewController {
         applyConstraints()
         updateCompletedTrackers()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        completedTrackerView.gradientBorder(width: 1, colors: [UIColor.gradientColor1, UIColor.gradientColor2, UIColor.gradientColor3])
+    }
 }
 
 extension StatisticViewController: TrackerRecordStoreDelegate {
