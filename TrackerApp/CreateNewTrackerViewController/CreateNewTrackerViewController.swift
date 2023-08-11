@@ -17,6 +17,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     private let trackerStore = TrackerStore()
     private let trackerRecordStore = TrackerRecordStore()
     private var typeOfEvent: TypeOfEvent
+    private var completedTrackers: [TrackerRecord] = []
     private var eventButtons: [String] {
         return typeOfEvent.caseOfButton
     }
@@ -182,11 +183,10 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
             titleTrackerTextField.text = editTracker.title
             headerLabel.text = "Редактирование привычки"
             selectedColor = editTracker.color
-            print(selectedColor as Any)
             selectedEmoji = editTracker.emoji  ?? ""
-            print(selectedEmoji)
             categoryTitle = editTracker.category?.title ?? ""
             updateCreateEventButton()
+            updateComplatedDay()
         }
     }
     
@@ -242,60 +242,126 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
         viewController.delegate = self
         present(viewController, animated: true)
     }
-   
+    
+    private func updateComplatedDay() {
+        if let editTracker = editTracker,
+           let editTrackerDate = editTrackerDate {
+            completedTrackers = trackerRecordStore.trackerRecords
+            let completedCount = completedTrackers.filter({ record in
+                record.trackerId == editTracker.id
+            }).count
+            complatedDay.text = String.localizedStringWithFormat(NSLocalizedString("numberOfDay", comment: "дней"), completedCount)
+        }
+    }
     private func addView() {
-        [headerLabel, tableView, titleTrackerTextField, buttonStack, errorLabel, collectionView].forEach(view.setupView(_:))
+        [headerLabel,complatedDay ,tableView, titleTrackerTextField, buttonStack, errorLabel, collectionView].forEach(view.setupView(_:))
     }
     
     private func applyConstraints() {
-        
-        if typeOfEvent == .regular {
-            NSLayoutConstraint.activate([
-                headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
-                titleTrackerTextField.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 30),
-                titleTrackerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                titleTrackerTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                titleTrackerTextField.heightAnchor.constraint(equalToConstant: 75 ),
-                errorLabel.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 8),
-                errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                tableView.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 38),
-                tableView.heightAnchor.constraint(equalToConstant: 150),
-                buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                buttonStack.heightAnchor.constraint(equalToConstant: 60),
-                buttonStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
-                collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 30),
-                collectionView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -10),
-                collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
-            ])
-        } else if typeOfEvent == .irregular {
-            NSLayoutConstraint.activate([
-                headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
-                titleTrackerTextField.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 30),
-                titleTrackerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                titleTrackerTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                titleTrackerTextField.heightAnchor.constraint(equalToConstant: 75 ),
-                errorLabel.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 8),
-                errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                tableView.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 38),
-                tableView.heightAnchor.constraint(equalToConstant: 75),
-                buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                buttonStack.heightAnchor.constraint(equalToConstant: 60),
-                buttonStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
-                collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 30),
-                collectionView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -10),
-                collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
-            ])
-            tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
+        if editTracker == nil {
+            if typeOfEvent == .regular {
+                NSLayoutConstraint.activate([
+                    headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
+                    titleTrackerTextField.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 30),
+                    titleTrackerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    titleTrackerTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    titleTrackerTextField.heightAnchor.constraint(equalToConstant: 75 ),
+                    errorLabel.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 8),
+                    errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    tableView.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 38),
+                    tableView.heightAnchor.constraint(equalToConstant: 150),
+                    buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    buttonStack.heightAnchor.constraint(equalToConstant: 60),
+                    buttonStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
+                    collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 30),
+                    collectionView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -10),
+                    collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+                ])
+            } else if typeOfEvent == .irregular {
+                NSLayoutConstraint.activate([
+                    headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
+                    complatedDay.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 24),
+                    complatedDay.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    complatedDay.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    titleTrackerTextField.topAnchor.constraint(equalTo: complatedDay.bottomAnchor, constant: 40),
+                    titleTrackerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    titleTrackerTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    titleTrackerTextField.heightAnchor.constraint(equalToConstant: 75 ),
+                    errorLabel.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 8),
+                    errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    tableView.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 38),
+                    tableView.heightAnchor.constraint(equalToConstant: 75),
+                    buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    buttonStack.heightAnchor.constraint(equalToConstant: 60),
+                    buttonStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
+                    collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 30),
+                    collectionView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -10),
+                    collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+                ])
+                tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
+            }
+        } else {
+            if typeOfEvent == .regular {
+                NSLayoutConstraint.activate([
+                    headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
+                    complatedDay.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 24),
+                    complatedDay.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    complatedDay.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    titleTrackerTextField.topAnchor.constraint(equalTo: complatedDay.bottomAnchor, constant: 40),
+                    titleTrackerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    titleTrackerTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    titleTrackerTextField.heightAnchor.constraint(equalToConstant: 75 ),
+                    errorLabel.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 8),
+                    errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    tableView.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 38),
+                    tableView.heightAnchor.constraint(equalToConstant: 150),
+                    buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    buttonStack.heightAnchor.constraint(equalToConstant: 60),
+                    buttonStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
+                    collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 30),
+                    collectionView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -10),
+                    collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+                ])
+            } else if typeOfEvent == .irregular {
+                NSLayoutConstraint.activate([
+                    headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
+                    titleTrackerTextField.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 30),
+                    titleTrackerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    titleTrackerTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    titleTrackerTextField.heightAnchor.constraint(equalToConstant: 75 ),
+                    errorLabel.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 8),
+                    errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    tableView.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 38),
+                    tableView.heightAnchor.constraint(equalToConstant: 75),
+                    buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                    buttonStack.heightAnchor.constraint(equalToConstant: 60),
+                    buttonStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
+                    collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 30),
+                    collectionView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -10),
+                    collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+                ])
+                tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: CGRectGetWidth(tableView.bounds))
+            }
         }
     }
     

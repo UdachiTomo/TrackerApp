@@ -18,8 +18,6 @@
 			<string>%d день</string>
 			<key>two</key>
 			<string>%d дня</string>
-			<key>few</key>
-			<string>%d дней</string>
 			<key>many</key>
 			<string>%d дней</string>
 			<key>other</key>
