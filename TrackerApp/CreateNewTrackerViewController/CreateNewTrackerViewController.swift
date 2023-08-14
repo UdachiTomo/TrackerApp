@@ -259,6 +259,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
     
     private func applyConstraints() {
         if editTracker == nil {
+            complatedDay.isHidden = true
             if typeOfEvent == .regular {
                 NSLayoutConstraint.activate([
                     headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -289,7 +290,7 @@ final class CreateNewTrackerViewController: UIViewController, TrackerScheduleVie
                     complatedDay.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 24),
                     complatedDay.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
                     complatedDay.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                    titleTrackerTextField.topAnchor.constraint(equalTo: complatedDay.bottomAnchor, constant: 40),
+                    titleTrackerTextField.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 30),
                     titleTrackerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
                     titleTrackerTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
                     titleTrackerTextField.heightAnchor.constraint(equalToConstant: 75 ),

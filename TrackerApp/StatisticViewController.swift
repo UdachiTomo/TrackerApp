@@ -85,6 +85,7 @@ final class StatisticViewController: UIViewController {
         plugImage.isHidden = completedTrackers.count > 0
         resultTitle.isHidden = completedTrackers.count == 0
         resultSubTitle.isHidden = completedTrackers.count == 0
+        completedTrackerView.isHidden = completedTrackers.count == 0
         
     }
     
